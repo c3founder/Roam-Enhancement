@@ -6,7 +6,7 @@
 // @version      0.4
 // @description  Add timestamp controls to YouTube videos embedded in Roam and makes the player responsive. 
 //               Parameters:
-//               Shortcuts: for grabbing title and current time as a timestamp.
+//               Shortcuts: 
 //               	grabTitleKey: if in a DIRECT child block of the YT video, 
 //									grabs the title and paste it to the beginning of the current block.
 //					grabTimeKey: if in ANY child blocks of the YT video, 
@@ -23,26 +23,6 @@
 //		         Player Size: Video height and width when the right sidebar is closed. 
 // @match        https://*.roamresearch.com
 
-/*const ytParams = {
-  //Player Size
-  vidHeight : 480,
-  vidWidth : 720,
-  //Shortcuts
-  grabTitleKey : 'alt+a t',
-  grabTimeKey : 'alt+a n',  
-  ////Speed Controls
-  normalSpeedKey : 'alt+a 0',
-  speedUpKey: 'alt+a =',
-  speedDownKey: 'alt+a -',
-  ////Volume Controls
-  muteKey: 'alt+a m',
-  volUpKey: 'alt+a i',
-  volDownKey: 'alt+a k',
-  ////Playback Controls
-  playPauseKey : 'alt+a p', 
-  backwardKey: 'alt+a j',
-  forwardKey: 'alt+a l'
-};*/
 const ytParams = window.ytParams;
 
 const activateYtVideos = () => {
