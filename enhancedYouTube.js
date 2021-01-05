@@ -26,7 +26,7 @@
 const ytParams = window.ytParams;
 
 const activateYtVideos = () => {
-	if(typeof(YT) == 'undefined' || typeof(YT.Player) == 'undefined') return;
+	if(typeof(YT) == 'undefined') return;
     Array.from(document.getElementsByTagName('IFRAME'))
         .filter(iframe => iframe.src.includes('youtube.com'))            
         .forEach(ytEl => {   
@@ -168,12 +168,6 @@ function fillTheBlock(givenTxt){
 }
 //Getting the playing player
 function whatIsPlaying(){ 
-    	console.log("Players length")
-  	console.log(players.size)
-	for (let [key, value] of players) {
-         console.log(key);
-      console.log(value.getPlayerState())
-    }  
 	for (let player of players.values()) {
           if(player.getPlayerState() == 1){
     		return player;
@@ -196,14 +190,9 @@ function whatIsPresent(){
 //Getting the target player
 //1)playing  or 2)most recent one or 3) the first one
 function targetPlayer(){
-  	console.log(players.size)
   	var playing = whatIsPlaying();
-  	console.log("playing")
-  	console.log(playing)
   	if(playing !== null)
       return playing;
-  	console.log("paused")
-  	console.log(paused)
   	if(paused !== null)
       return paused;
     //If nothing is playing return the fist player (if exists) that is not cued.
@@ -337,7 +326,6 @@ var mouseTrapReady = setInterval(() => {
     var playing = targetPlayer();
 	if(playing !== null){  
       	var duration = playing.getDuration();
-      console.log(duration)
       	playing.seekTo(Math.min(playing.getCurrentTime() + 10, duration), true)		
 		return false;  
     }
