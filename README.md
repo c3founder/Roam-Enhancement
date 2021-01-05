@@ -5,7 +5,7 @@ To install, do the same thing you do for any roam/js script.
 
 1. Create page in Roam (if not already present) called [[roam/js]]
 1. If you previously installed this script by copying from a GitHub Gist, remove it from [[roam/js]] now.
-1. Create a new block on this page and enter: ``
+1. Create a new block on this page and enter: ```
 1. Nest under that block a Code Block
 1. Make sure the code language is set as JavaScript
 1. Paste the following into the new Code Block
@@ -50,7 +50,7 @@ To install, do the same thing you do for any roam/js script.
 ## Functionalities  
 
 ### Responsive/Resizable Player 
-You can set the original iframe size here in the code if you choose to copy 
+You can set the original iframe size here in the code plus the border style. 
 
 - **Parameters:** Border style of the video and its height and width when the right sidebar is closed. 
 	- borderStyle : border style 
@@ -63,17 +63,23 @@ You can set the original iframe size here in the code if you choose to copy
 
 
 ### YouTube Timestamp 
-You can add timestamp to videos. 
+You can add timestamps to videos using a shortcut. 
 
 - **Parameters:**
-	- grabTitleKey: if in a DIRECT child block of the YT video, grabs the title and paste it to the beginning of the current block.
-	- grabTimeKey: if in ANY child blocks of the YT video, grabs the current time of the player and paste it to the beginning.
+  - grabTitleKey: if in a DIRECT child block of the YT video, grabs the title and paste it to the beginning of the current block.
+  - grabTimeKey: if in ANY child blocks of the YT video, it captures the player's current time and pastes it to the beginning of the block.
 - **Demo**
 	- [![timestamp](https://img.youtube.com/vi/Kgo_Lkw-2CA/0.jpg)](https://www.youtube.com/watch?v=Kgo_Lkw-2CA&ab_channel=ConnectedCognitionCrumbs)
 
 
 ### In-text Controllable Player
-You can control YT player while you are typing. If you have one player on the page, shortcuts will control that. When multi YT players are present shortcuts will control the playing one. If nothing is playing, shortcuts will control the last active player. 
+You can control the YT player while you are typing. 
+
+- If you have one player on the page, shortcuts will control the player, easy. 
+- When multi YT players are present 
+  - If only one is playing: shortcuts will control the playing one. 
+  - If nothing is playing, shortcuts will control the last playing video you paused by shortcut (not mouse click). For example, you can mute/unmute or -10/+10 the last video you paused or play it with `alt+a p`.
+  - If multiple videos are playing, everything is ambiguous, so you can only control the first one (according to the order of appearance on the page). You can pause them all in order by `alt+a p`, though. 
 
 - **Parameters:** 
 	- playPauseKey: play/pause the most recent player or the first one
@@ -82,7 +88,7 @@ You can control YT player while you are typing. If you have one player on the pa
 	- normalSpeedKey: set the playback rate to 1
 	- speedUpKey: increase the rate by .25
 	- speedDownKey: decrease the rate by .25
-	- muteKey: mut the player
+	- muteKey: mute the player
 	- volUpKey: increase volume by 10/100
 	- volDownKey: decrease volume by 10/100
 - **Demo**
