@@ -12,7 +12,12 @@ To install, do the same thing you do for any roam/js script.
 
 	```javascript
 	window.ytParams = {
-	  //Player Size
+	  //Player
+	  ////Player Style
+	  border : '0px',
+	  borderStyle : 'inset',
+	  borderRadius : '25px',
+	  ////Player Size
 	  vidHeight : 480,
 	  vidWidth : 720,
 	  //Shortcuts
@@ -47,7 +52,10 @@ To install, do the same thing you do for any roam/js script.
 ### Responsive/Resizable Player 
 You can set the original iframe size here in the code if you choose to copy 
 
-- **Parameters:** Video height and width when the right sidebar is closed. 
+- **Parameters:** Border style of the video and its height and width when the right sidebar is closed. 
+	- borderStyle : border style 
+	- border : [border thickness](https://www.w3schools.com/jsref/prop_style_borderstyle.asp)
+	- borderRadius : curvature of corners
 	- vidHeight : height 
 	- vidWidth : width 
 - **Demo**

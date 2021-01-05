@@ -111,22 +111,22 @@ const adjustIframe = (frameId, sideBarOpen) => {
   if(sideBarOpen){
     child.style.position = 'absolute';
     child.style.margin = '0px';
-    child.style.border = '0px';
+    child.style.border = ytParams.border; //'0px';
     child.style.width = '100%';
     child.style.height = '100%';
-    child.style.borderStyle = 'inset';
-    child.style.borderRadius = '25px';
+    child.style.borderStyle = ytParams.borderStyle; //'inset';
+    child.style.borderRadius = ytParams.borderRadius; //'25px';
     par.style.position = 'relative';
     par.style.paddingBottom = '56.25%';     
     par.style.height = '0px';
   } else {
     child.style.position = null;
     child.style.margin = '0px';
-    child.style.border = '0px';        
+    child.style.border = ytParams.border; //'0px';        
     child.style.width = ytParams.vidWidth + 'px';
     child.style.height = ytParams.vidHeight + 'px';
-    child.style.borderStyle = 'inset';
-    child.style.borderRadius = '25px';
+    child.style.borderStyle = ytParams.borderStyle; //'inset';
+    child.style.borderRadius = ytParams.borderRadius; //'25px';
     par.style.position = null;
     par.style.paddingBottom = '0px';   
     par.style.height = ytParams.vidHeight + 20 + 'px';
