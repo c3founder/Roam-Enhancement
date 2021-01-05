@@ -23,7 +23,7 @@
 //		         Player Size: Video height and width when the right sidebar is closed. 
 // @match        https://*.roamresearch.com
 
-const ytParams = {
+/*const ytParams = {
   //Player Size
   vidHeight : 480,
   vidWidth : 720,
@@ -42,7 +42,8 @@ const ytParams = {
   playPauseKey : 'alt+a p', 
   backwardKey: 'alt+a j',
   forwardKey: 'alt+a l'
-};
+};*/
+const ytParams = window.ytParams;
 
 const activateYtVideos = () => {
 	if(typeof(YT) == 'undefined' || typeof(YT.Player) == 'undefined') return;
