@@ -1,0 +1,23 @@
+.timestamp-control{
+  background-color: rgba(108,109,36,0.1); 
+  color: rgb(251,106,13);
+  margin-right: 8px;
+  margin-top: 0px;
+  margin-left: 0px;
+  margin-bottom: 5px;
+
+  border-radius: 50% !important;
+  border-style: inset;  
+  border-color: #FF3200;
+  font-size: 0.9em;
+}
+.timestamp-control:hover {
+  background-color: rgba(108,109,36,0.25); 
+  border-style: outset;  
+  color: #FFFFFF;
+}
+/* Hide YouTube Breadcrumb */
+.parent-path-wrapper > div > span > div > iframe,
+.parent-path-wrapper > div > span > .hoverparent {
+  display: none;
+}
