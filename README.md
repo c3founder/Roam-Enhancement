@@ -51,6 +51,8 @@ You can set the original iframe size here in the code if you choose to copy
 	- vidHeight : height 
 	- vidWidth : width 
 - **Demo**
+	- [![responsive player](https://img.youtube.com/vi/vJ3gPX89fz0/0.jpg)](https://www.youtube.com/watch?v=vJ3gPX89fz0&ab_channel=ConnectedCognitionCrumbs)
+
 
 ### YouTube Timestamp 
 You can add timestamp to videos. 
@@ -59,6 +61,8 @@ You can add timestamp to videos.
 	- grabTitleKey: if in a DIRECT child block of the YT video, grabs the title and paste it to the beginning of the current block.
 	- grabTimeKey: if in ANY child blocks of the YT video, grabs the current time of the player and paste it to the beginning.
 - **Demo**
+	- [![timestamp](https://img.youtube.com/vi/Kgo_Lkw-2CA/0.jpg)](https://www.youtube.com/watch?v=Kgo_Lkw-2CA&ab_channel=ConnectedCognitionCrumbs)
+
 
 ### In-text Controllable Player
 You can control YT player while you are typing. If you have one player on the page, shortcuts will control that. When multi YT players are present shortcuts will control the playing one. If nothing is playing, shortcuts will control the last active player. 
