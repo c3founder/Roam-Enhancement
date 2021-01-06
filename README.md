@@ -1,13 +1,20 @@
 # Enhanced YouTube Player for Roam Research
 
 ## Installation 
+### JavaScript
+
 To install, do the same thing you do for any roam/js script.
 
 1. Create page in Roam (if not already present) called [[roam/js]]
+
 1. If you previously installed this script by copying from a GitHub Gist, remove it from [[roam/js]] now.
+
 1. Create a new block on this page and enter: ```
+
 1. Nest under that block a Code Block
+
 1. Make sure the code language is set as JavaScript
+
 1. Paste the following into the new Code Block
 
 	```javascript
@@ -42,9 +49,23 @@ To install, do the same thing you do for any roam/js script.
 	s.src = "https://c3founder.github.io/Roam-Enhancement/enhancedYouTube.js";
 	document.getElementsByTagName("head")[0].appendChild(s);
 	```
+	
 1. A warning box shows up asking you to review the risks of using roam/js.
+
 1. Once you have reviewed the warning and understand/accept the risk, click Yes.
+
 1. Refresh Roam and the script should now be installed!
+
+### CSS
+
+To install the CSS put this line in a CSS code block on you [[roam/css]] page: 
+
+~~~css
+@import url('https://c3founder.github.io/Roam-Enhancement/enhancedYouTube.css');
+~~~
+
+   
+
 
 
 ## Functionalities  
@@ -92,3 +113,6 @@ You can control the YT player while you are typing.
 	- volUpKey: increase volume by 10/100
 	- volDownKey: decrease volume by 10/100
 - **Demo**
+
+- - [![timestamp](https://img.youtube.com/vi/ADJvhW31xj4/0.jpg)](https://www.youtube.com/watch?v=ADJvhW31xj4&ab_channel=ConnectedCognitionCrumbs)
+
