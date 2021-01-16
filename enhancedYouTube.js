@@ -38,6 +38,7 @@ const activateYtVideos = () => {
               var ytId = extractVideoID(ytEl.src); 
               var frameId = "yt-" + ytEl.closest('.roam-block').id;
               ytEl.parentElement.id = frameId; 
+			  ytEl.parentElement.classList.remove("rm-video-player__container", "hoverparent");
               ytEl.remove();
               players.set(frameId, new window.YT.Player(frameId, {
                 height: ytParams.vidHeight,  	
