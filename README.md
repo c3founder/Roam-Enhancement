@@ -1,3 +1,71 @@
+# Enhanced PDF for Roam Research 
+
+## Installation 
+
+### JavaScript
+
+To install, do the same thing you do for any roam/js script.
+
+1. Create page in Roam (if not already present) called [[roam/js]]
+
+1. If you previously installed this script by copying from a GitHub Gist, remove it from [[roam/js]] now.
+
+1. Create a new block on this page and enter: ```
+
+1. Nest under that block a Code Block
+
+1. Make sure the code language is set as JavaScript
+
+1. Paste the following into the new Code Block
+
+   ``` javascript
+   window.pdfParams = {
+   	//Highlight Place
+   	outputHighlighAt : 'cousin', //cousin, child
+   	breadCrumbAttribute : 'Title', //Title, Author, Citekey, etc.
+   	copyBlockRef : true,//false: copy captured text
+   	//Rerference Highlight Buttons
+   	refHlChar : '⚡', //use '' to disable
+   	aliasChar : '✳', //use '' to disable
+   	textChar : 'T', //use '' to disable	
+   	//Viewer
+   	pdfStaticHeight : 750,
+   	pdfStaticWidth : 1000,
+   	pdfMinWidth : 400,
+   	pdfMinHeight : 1200,
+   	///Citation Format 
+   	blockQ : false,//true: adds [[>]] to the hls.	
+   	//use '' to disable 
+       //use "[${cKey}]([[@${cKey}]])" or any other formating string for highlight citation
+   	//cKey will be replaced by the value of citeKeyAttribute
+   	citationFormat : '',
+   	citeKeyAttribute : 'Citekey' //Title, Author, Citekey, etc.
+   };
+   
+   var s = document.createElement("script");
+   s.type = "text/javascript";
+   s.src = "https://c3founder.github.io/Roam-Enhancement/enhancedPDF.js";
+   document.getElementsByTagName("head")[0].appendChild(s);
+   ```
+
+1. A warning box shows up asking you to review the risks of using roam/js.
+
+1. Once you have reviewed the warning and understand/accept the risk, click Yes.
+
+1. Refresh Roam and the script should now be installed!
+
+### CSS 
+
+To install the CSS put this line in a CSS code block on you [[roam/css]] page: 
+
+~~~css
+@import url('https://c3founder.github.io/Roam-Enhancement/enhancedPDF.css');
+~~~
+
+## Functionalities   
+
+
+
 # Enhanced YouTube Player for Roam Research
 
 ## Installation 
@@ -63,10 +131,6 @@ To install the CSS put this line in a CSS code block on you [[roam/css]] page:
 ~~~css
 @import url('https://c3founder.github.io/Roam-Enhancement/enhancedYouTube.css');
 ~~~
-
-   
-
-
 
 ## Functionalities  
 

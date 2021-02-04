@@ -1,0 +1,24 @@
+/*All btns*/
+.btn{padding: 0px !important;  border: 0px !important;}
+
+/*All main highlight btns*/
+.btn-pdf-activated{
+  border-radius: 14px !important;
+  font-size: 12px !important;
+  font-weight: bold;
+  min-width: 18px !important;
+  min-height: 18px !important;
+}
+
+/*All reference to highlight buttons*/
+.pdf-ctrl{
+  font-size: 12px !important;
+  margin-top: 4px !important;
+}
+
+.btn-rep-text{
+}
+.btn-rep-alias{
+}
+.btn-annotation{
+}
