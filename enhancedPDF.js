@@ -83,11 +83,11 @@ var hlDeletionObserver = new MutationObserver(mutations => {
              Array.from(node.getElementsByTagName('button')) //if it had a button
                .filter(isHighlightBtn)
                .forEach(async function(btn){
-               	  const match = btn.id.match(/main-hlBtn-(.........)/)                  
-                  await pdfSleep(5000) //Maybe someone is moving blocks or undo
-                  var isPresent = document.getElementById(btn.id)               		
-                  if(match && !isPresent){                    
-                    window.roamAlphaAPI.deleteBlock({"block": {"uid": match[1]}})
+               	  const match = btn.id.match(/main-hlBtn-(.........)/)  
+                  await pdfSleep(5000) //Maybe someone is moving blocks or undo                  
+                  if(match){
+                    if(!existBlockUid(blockString(match[1])))
+                    	window.roamAlphaAPI.deleteBlock({"block": {"uid": match[1]}})
                   }
                 });                      
           }
@@ -98,8 +98,8 @@ var hlDeletionObserver = new MutationObserver(mutations => {
 ///////////////Wait for roam to fully load then observe
 var roamArticle;
 var roamArticleReady = setInterval(() => {
-    if(!document.querySelector('.roam-article')) return;
-  	roamArticle = document.querySelector('.roam-article')   
+    if(!document.querySelector('.roam-app')) return;
+  	roamArticle = document.querySelector('.roam-app')   
   	hlDeletionObserver.observe(roamArticle, {
       childList: true,
       subtree: true
@@ -559,7 +559,7 @@ function existBlockUid(blockUid){
     `[:find (pull ?block [:block/uid])
       :where
 	   	  [?block :block/uid \"${blockUid}\"]]`)
-  return res.length ? null : blockUid
+  return res.length ? blockUid : null
 }
 
 function parentBlockUid(blockUid){
