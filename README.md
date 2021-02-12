@@ -1,4 +1,4 @@
-# Enhanced PDF for Roam Research 
+# PDF Highlighter for Roam Research 
 
 ## Installation 
 
@@ -29,10 +29,10 @@ To install, do the same thing you do for any roam/js script.
    	aliasChar : '✳', //use '' to disable
    	textChar : 'T', //use '' to disable	
    	//Viewer
-   	pdfStaticHeight : 750,
+   	pdfStaticHeight : 900,
    	pdfStaticWidth : 1000,
    	pdfMinWidth : 400,
-   	pdfMinHeight : 1200,
+   	pdfMinHeight : 900,
    	///Citation Format 
    	blockQ : false,//true: adds [[>]] to the hls.	
    	//use '' to disable 

@@ -119,13 +119,15 @@ function activateButtons() {
         const btnBlockUid = getUidOfContainingBlock(btn);
         const hlBlockUid = followRef(btnBlockUid);      
         const pdfInfo = getPdfInfoFromHighlight(hlBlockUid);   
-        //is this MainHilight or ref? could i locate the url?
-		const btnBlock = addBreadcrumb(btn, pdfInfo.uid);
-		const newUrl = encodePdfUrl(pdfInfo.url);
-        if(btnBlockUid == hlBlockUid && pdfInfo.url){           
+        if(pdfInfo){
+          const btnBlock = addBreadcrumb(btn, pdfInfo.uid);
+          const newUrl = encodePdfUrl(pdfInfo.url);
+          //is this MainHilight or ref? could i locate the url?
+          if(btnBlockUid == hlBlockUid && pdfInfo.url){           
             handleMainBtns(btn, btnBlock, newUrl, getSingleHighlight(hlBlockUid));
-        } else { //Referenced highlights   
+          } else { //Referenced highlights   
             handleRefBtns(btn, btnBlock, newUrl, btnBlockUid, hlBlockUid);       
+          }
         }
     })
 }
