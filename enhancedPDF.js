@@ -130,24 +130,57 @@ function activateButtons() {
           }
         }
     })
+	Array.from(document.getElementsByTagName('button'))
+	.filter(isInactiveSortBtn)
+	.forEach(btn => {
+		const sortBtnBlockUid = getUidOfContainingBlock(btn);
+       	btn.classList.add('btn-sort-highlight', 'btn-pdf-activated');
+		const pdfUid = parentBlockUid(sortBtnBlockUid)
+		const match = blockString(pdfUid).match(/\{{pdf:\s(.*)}}/);
+		if(match[1]){		
+			const pdfUrl = match[1];
+			var highlights = getAllHighlights(pdfUrl, pdfUid, true)
+			highlights.sort(function(a, b){
+                if(a.position.pageNumber < b.position.pageNumber)
+                    return -1
+                if(a.position.pageNumber > b.position.pageNumber)
+                    return +1	
+                if(a.position.boundingRect.x2 < b.position.boundingRect.x1)
+                    return -1
+                if(a.position.boundingRect.y1 < b.position.boundingRect.y1)	
+                    return -1
+                return +1
+            });
+          	var cnt = 0
+            btn.onclick = () => 
+				highlights.map(function(item){createChildBlock(sortBtnBlockUid, cnt++, "(("+item.blockRef+"))",createUid());})
+
+		}
+	})
 }
+
+
 /////////////////////////////////////////////////////////
 ///////////////Portal to the Data Page //////////////////
 /////////////////////////////////////////////////////////
 ///////////////From highlight => Data page => Retrieve PDF url and uid.
 function getPdfInfoFromHighlight(hlBlockUid){
-  const hlDataRowUid = getHighlightDataAddress(hlBlockUid)
-  const pdfDataPageUid = containingPageUid(hlDataRowUid);
-  if(!pdfDataPageUid) return null;
-  const url = blockString(getPdfSrcUid(pdfDataPageUid));
-  const uid = blockString(getPdfBlockUid(pdfDataPageUid));
-  return {url : url, uid : uid};
+  var match = blockString(hlBlockUid).match(/\[📑]\(\(\((.........)\)\)\)/);
+  if(!match[1]) return null ;
+  const pdfUid = match[1];
+  match = blockString(pdfUid).match(/\{{pdf:\s(.*)}}/);
+  if(!match[1]) return null;
+  const pdfUrl = match[1];
+  return {url : pdfUrl, uid : pdfUid};
 }
 
 ///////////////From highlight => Row of the data table => Highlight coordinates
 function getSingleHighlight(hlBlockUid){
-  const hlDataRowUid = getHighlightDataAddress(hlBlockUid)
-  return getHighlight(queryAllTxtInChildren(hlDataRowUid)[0][0])
+  const hlDataRowUid = getHighlightDataAddress(hlBlockUid);
+  const hlDataRow = queryAllTxtInChildren(hlDataRowUid);
+  console.log(hlDataRow)
+  if(hlDataRow.length === 0) return null;
+  return getHighlight(hlDataRow[0][0]);
 }
 
 ///////////////From button's text jump to the corresponding data table row
@@ -171,16 +204,36 @@ function getPdfBlockUid(pdfDataPageUid){
 //////////////Gather Buttons Information ////////////////
 /////////////////////////////////////////////////////////
 ///////////////Are these highlight buttons?
-function isHighlightBtn(btn){
-  return !btn.classList.contains('block-ref-count-button')
-  		&& !btn.classList.contains('bp3-minimal')
-		&& btn.innerText.match(/^\d+$/)
+function isRoamBtn(btn){
+	return btn.classList.contains('block-ref-count-button')
+  		|| btn.classList.contains('bp3-minimal')
 }
-function isInactiveHighlightBtn(btn) {
-	return isHighlightBtn(btn)
-		&& !btn.classList.contains('btn-pdf-activated')
+
+function isInactive(btn){
+	return !btn.classList.contains('btn-pdf-activated')
 		&& !btn.classList.contains('pdf-ctrl');
 }
+
+function isHighlightBtn(btn){
+  return !isRoamBtn(btn)
+		 && btn.innerText.match(/^\d+$/)
+}
+
+function isSortBtn(btn){
+	return !isRoamBtn(btn)
+		   && btn.innerText.match(new RegExp(pdfParams.sortBtnText))
+}
+
+function isInactiveSortBtn(btn) {
+	return isSortBtn(btn)
+		&& isInactive(btn) 
+}
+
+function isInactiveHighlightBtn(btn) {
+	return isHighlightBtn(btn)
+		&& isInactive(btn) 
+}
+
 ///////////////Get the Original Highlight
 ///////////////Where am I? Main Hilight or Reference?
 function followRef(ref) {
@@ -196,9 +249,9 @@ function getIframeSrc(text){
   return match ? match[1] : null;
 }
 
-function getHighlightsFromTable(uid) {
+function getHighlightsFromTable(uid, sendBlockRefs) {
   const hls = queryAllTxtInChildren(uid)[0][0].children;  
-  return hls.map(getHighlight).filter(hl => hl != null);
+  return hls.map(function(x) {return getHighlight(x, sendBlockRefs);}).filter(hl => hl != null);
 }
 
 function getTextFromNestedNodes(node, texts) {
@@ -207,17 +260,21 @@ function getTextFromNestedNodes(node, texts) {
     node.children.forEach(child => getTextFromNestedNodes(child, texts))
 }
 
-function getHighlight(hl) { //the column order is: (hlUid, hlPos, hlTxt)
-  const position = JSON.parse(hl.children[0].string);
-  const hlText = hl.children[0].children[0].string;  
-  return { content: { text: hlText }, position };
+function getHighlight(hl, sendBlockRefs) { //the column order is: (hlUid, hlPos, hlTxt)
+	const position = JSON.parse(hl.children[0].string);
+	const hlText = hl.children[0].children[0].string;  
+	if(sendBlockRefs){
+		const blockRef = hl.string 
+		return { blockRef, content: { text: hlText }, position };
+	}	
+	return { content: { text: hlText }, position };  
 }
 
 ////////////////////////////////////////////////////////////
 ////////Activate of the Main Highlight under the PDF////////
 ////////////////////////////////////////////////////////////
 function handleMainBtns(btn, btnBlock, iframeSrc, highlight){
-  //if (highlights.length > 0) {          
+  if (highlight) {          
     btn.classList.add('btn-highlight', 'btn', 'btn-default', 'btn-pdf-activated');
     /*if(mainHlChar)
   		btn.innerText = mainHlChar;*/
@@ -230,7 +287,7 @@ function handleMainBtns(btn, btnBlock, iframeSrc, highlight){
   	displaceBtn(btnBlock, "pdf-alias-main", aliasRootSpan)
 	displaceBtn(btnBlock, "main-hl", pageRootSpan)
   	btn.addEventListener("click", function(){handleMainHighlightClick(btnBlock, iframeSrc, highlight)});
-  //}
+  }
 }
 
 ////////Plant the unrooted btn after the roam block separator (at the end of a block)
@@ -303,9 +360,11 @@ function handleRefBtns(btn, btnBlock, iframeSrc, btnBlockUid, hlBlockUid){
 
 ////////////////////Breadcrumb Addition////////////////////
 ////////////////////Breadcrumb Placement
+var pdf2attr = {}
 function addBreadcrumb(btn, pdfUid){
   const btnBlock = btn.closest(".rm-block__input");
-  btnBlock.firstChild.setAttribute("title",findPDFAttribute(pdfUid, pdfParams.breadCrumbAttribute) + "/Pg" + btn.innerText);  
+  if(!pdf2attr[pdfUid]) pdf2attr[pdfUid] = findPDFAttribute(pdfUid, pdfParams.breadCrumbAttribute)
+  btnBlock.firstChild.setAttribute("title", pdf2attr[pdfUid] + "/Pg" + btn.innerText);  
   btnBlock.firstChild.classList.add("breadCrumb");
   return btnBlock;
 }
@@ -317,18 +376,25 @@ function findPDFAttribute(pdfUid, attribute){
   	gParentRef = parentBlockUid(parentBlockUid(pdfUid));
   else //child mode
     gParentRef = parentBlockUid(pdfUid);
-  const nestedTxt = queryAllTxtInChildren(gParentRef);
-  const texts = [];
-  nestedTxt.forEach(res => getTextFromNestedNodes(res[0], texts));  
-  const metaInfo = texts.map(x => {return getMetaInfo(x, attribute)}).filter(meta => meta != null);
-    return (metaInfo.length == 0 ? "" : metaInfo); 
-
-}
-
-function getMetaInfo(text, attribute) {
-  if(text.indexOf(attribute) == -1) return null;
-  const keyStartIndex = text.indexOf(attribute) + attribute.length + 2; //2 for :: of attributes
-  return text.substring(keyStartIndex);
+  
+ let ancestorrule=`[ 
+                   [ (ancestor ?b ?a) 
+                        [?a :block/children ?b] ] 
+                   [ (ancestor ?b ?a) 
+                        [?parent :block/children ?b ] 
+                        (ancestor ?parent ?a) ] ] ]`;
+  
+  const res = window.roamAlphaAPI.q(
+    `[:find (pull ?block [:block/string])
+	  :in $ %
+      :where
+          [?block :block/string ?attr]
+          [(clojure.string/starts-with? ?attr \"${attribute}\")]
+		  (ancestor ?block ?gblock)
+	   	  [?gblock :block/uid \"${gParentRef}\"]]`, ancestorrule)  
+   if(!res.length) return null 
+   const attrString = res[0][0].string
+   return attrString.substring(attrString.indexOf(attribute) + attribute.length + 2)
 }
 
 ///////////////////Main Button Replacement//////////////////
@@ -435,7 +501,7 @@ function handleRecievedHighlight(event) {
   } else {
   	hlContent = `${event.data.highlight.content.text}`;
   }  
-  writeHighlightText(pdfBlockUid, hlTextUid, hlBtn, hlContent, pdfAlias);
+  writeHighlightText(pdfBlockUid, hlTextUid, hlBtn, hlContent, pdfAlias, page);
   saveHighlightData(pdfBlockUid, decodePdfUrl(iframe.src), hlDataUid , hlTextUid, hlPosition, hlContent);
 } 
 
@@ -461,7 +527,8 @@ function getUncleBlock(pdfBlockUid){
 }
 
 ////////////Write the Highlight Text Using the Given Format
-function writeHighlightText(pdfBlockUid, hlTextUid, hlBtn, hlContent, pdfAlias){  
+var pdf2citeKey = {}  
+function writeHighlightText(pdfBlockUid, hlTextUid, hlBtn, hlContent, pdfAlias, page){  
   let hlParentBlockUid;
   if(pdfParams.outputHighlighAt === 'cousin'){
     hlParentBlockUid = getUncleBlock(pdfBlockUid);
@@ -470,10 +537,18 @@ function writeHighlightText(pdfBlockUid, hlTextUid, hlBtn, hlContent, pdfAlias){
     hlParentBlockUid = pdfBlockUid
   }    
   const perfix = pdfParams.blockQ ? '[[>]]' : '';      
-  const cKey = pdfParams.citationFormat !== '' ? findPDFAttribute(pdfBlockUid, pdfParams.citeKeyAttribute) : '';  
+  var Citekey = '';
+  if(pdfParams.citationFormat !== ''){
+    if(!pdf2citeKey[pdfBlockUid]) {
+    	pdf2citeKey[pdfBlockUid] = findPDFAttribute(pdfBlockUid, "Citekey")  
+    }
+    Citekey = pdf2citeKey[pdfBlockUid]
+  } 
   const citation = eval('`'+pdfParams.citationFormat+'`').replace(/\s+/g, '');
+  console.log(citation)
   const hlText = perfix+" "+hlBtn+" "+pdfAlias+" "+hlContent+" "+citation;
-  createChildBlock(hlParentBlockUid, 0, hlText, hlTextUid);
+  const ord = pdfParams.appendHighlight ? 9999999 : 0;
+  createChildBlock(hlParentBlockUid, ord, hlText, hlTextUid);
 
   if(pdfParams.copyBlockRef)
     navigator.clipboard.writeText("(("+hlTextUid+"))");
@@ -516,15 +591,15 @@ function renderPdf(iframe) {
 
 /////////////////////Send Old Saved Highlights to Server to Render
 function sendHighlights(iframe, originalPdfUrl, pdfBlockUid) {    
-  const highlights = getAllHighlights(originalPdfUrl, pdfBlockUid);
+  const highlights = getAllHighlights(originalPdfUrl, pdfBlockUid, false);
   window.setTimeout( // give it 5 seconds to load
     () => iframe.contentWindow.postMessage({highlights}, '*'), 2000);
 }
 
 /////////////////////From PDF URL => Data Page => Retrieve Data
-function getAllHighlights(pdfUrl, pdfUid){  
+function getAllHighlights(pdfUrl, pdfUid, sendBlockRefs){  
   const dataTableUid = getDataTableUid(pdfUrl, pdfUid);
-  return getHighlightsFromTable(dataTableUid);
+  return getHighlightsFromTable(dataTableUid, sendBlockRefs);
 }
 
 function getDataTableUid(pdfUrl, pdfUid){
@@ -570,24 +645,6 @@ function parentBlockUid(blockUid){
       :where
           [?parent :block/children ?block]
 	   	  [?block :block/uid \"${blockUid}\"]]`)  
-  return res.length ? res[0][0].uid : null
-}
-
-function containingPageUid(blockUid){
-  let ancestorrule=`[ 
-                   [ (ancestor ?b ?a) 
-                        [?a :block/children ?b] ] 
-                   [ (ancestor ?b ?a) 
-                        [?parent :block/children ?b ] 
-                        (ancestor ?parent ?a) ] ] ]`;
-                             
-  const res = window.roamAlphaAPI.q(
-    `[:find (pull ?page [:block/uid])
-	  :in $ ?blockUid %
-      :where
-          [?page :node/title]
-		  (ancestor ?block ?page)
-	   	  [?block :block/uid ?blockUid]]`, blockUid, ancestorrule)  
   return res.length ? res[0][0].uid : null
 }
 
