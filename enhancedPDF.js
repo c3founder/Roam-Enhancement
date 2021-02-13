@@ -2,7 +2,7 @@
 // @name         Enhanced-PDF Extension for Roam Research
 // @author       Ryan Muller @cicatriz and Connected Cognition Crumbs <c3founder@gmail.com>
 // @require 	 -
-// @version      0.4
+// @version      0.5
 // @match        https://*.roamresearch.com
 // @description  Handle PDF Highlights.  
 //		 MAIN OUTPUT MODES: 
@@ -178,7 +178,6 @@ function getPdfInfoFromHighlight(hlBlockUid){
 function getSingleHighlight(hlBlockUid){
   const hlDataRowUid = getHighlightDataAddress(hlBlockUid);
   const hlDataRow = queryAllTxtInChildren(hlDataRowUid);
-  console.log(hlDataRow)
   if(hlDataRow.length === 0) return null;
   return getHighlight(hlDataRow[0][0]);
 }
@@ -545,7 +544,6 @@ function writeHighlightText(pdfBlockUid, hlTextUid, hlBtn, hlContent, pdfAlias, 
     Citekey = pdf2citeKey[pdfBlockUid]
   } 
   const citation = eval('`'+pdfParams.citationFormat+'`').replace(/\s+/g, '');
-  console.log(citation)
   const hlText = perfix+" "+hlBtn+" "+pdfAlias+" "+hlContent+" "+citation;
   const ord = pdfParams.appendHighlight ? 9999999 : 0;
   createChildBlock(hlParentBlockUid, ord, hlText, hlTextUid);

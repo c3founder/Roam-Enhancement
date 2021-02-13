@@ -39,12 +39,12 @@ To install, do the same thing you do for any roam/js script.
    	blockQ : false,//true: adds [[>]] to the hls.	
    	//use Citekey and page in any formating string 
      	//common usecase: 
-   	////Zotero imports with roam page title = @Citekey and Citekey attribute
-     	//use "[${Citekey}]([[@${Citekey}]])" 
-     	//To add page number 
-   	//use "[${Citekey}, ${page}]([[@${Citekey}]])" 
+   	////Zotero imports with 'roam page title' = @Citekey and Citekey attribute
+       ////Examples
+     	//"[${Citekey}]([[@${Citekey}]])" 
+     	//"[(${Citekey}, ${page})]([[@${Citekey}]])" 
    	//use '' to disable  
-   	citationFormat : "[${Citekey}, ${page}]([[@${Citekey}]])",	
+   	citationFormat : "[(${Citekey}, ${page})]([[@${Citekey}]])",	
    };
    
    var s = document.createElement("script");
