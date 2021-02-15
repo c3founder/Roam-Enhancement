@@ -2,7 +2,7 @@
 // @name         Enhanced-PDF Extension for Roam Research
 // @author       Ryan Muller @cicatriz and Connected Cognition Crumbs <c3founder@gmail.com>
 // @require 	 -
-// @version      0.5
+// @version      0.6
 // @match        https://*.roamresearch.com
 // @description  Handle PDF Highlights.  
 //		 MAIN OUTPUT MODES: 
@@ -32,6 +32,7 @@ window.setInterval(initPdf, 1000);
 const serverPerfix = 'https://roampdf.web.app/?url=';
 const pdfChar = '📑';
 //const mainHlChar = null;
+//refHlChar : '⚡', //use '' to disable
 
 function initPdf() {
   Array.from(document.getElementsByTagName('iframe')).forEach(iframe => {
@@ -80,21 +81,53 @@ var hlDeletionObserver = new MutationObserver(mutations => {
     mutation.removedNodes.forEach(node => {
       if(typeof(node.classList) !== 'undefined'){
         if(node.classList.contains("roam-block-container")){ //if a block is deleted
-             Array.from(node.getElementsByTagName('button')) //if it had a button
-               .filter(isHighlightBtn)
-               .forEach(async function(btn){
-               	  const match = btn.id.match(/main-hlBtn-(.........)/)  
-                  await pdfSleep(5000) //Maybe someone is moving blocks or undo                  
-                  if(match){
-                    if(!existBlockUid(blockString(match[1])))
-                    	window.roamAlphaAPI.deleteBlock({"block": {"uid": match[1]}})
-                  }
-                });                      
+             handleHighlightDelete(node) 
+			 handlePdfDelete(node)  
           }
         }
 	});
   });
 });
+
+function handleHighlightDelete(node){
+	Array.from(node.getElementsByTagName('button')) //if it had a button
+   .filter(isHighlightBtn)
+   .forEach(async function(btn){
+	  const match = btn.id.match(/main-hlBtn-(.........)/)  
+	  if(match){
+		if(existBlockUid(match[1])){//If the datae page was deleted ignore 
+			await pdfSleep(5000) //Maybe someone is moving blocks or undo                  
+			if(!existBlockUid(blockString(match[1])))
+				window.roamAlphaAPI.deleteBlock({"block": {"uid": match[1]}})
+		}
+	  }
+	}); 
+}
+
+function handlePdfDelete(node){
+	Array.from(node.getElementsByTagName('iframe'))
+   .filter(x => {return x.src.indexOf(serverPerfix) !== -1;})
+   .forEach(async function(iframe) {	
+	   await pdfSleep(1000) //Maybe someone is moving blocks or undo
+	   const pdfUid = iframe.id.slice(-9)
+	   if(!existBlockUid(pdfUid)){ //pdf block deleted
+		   const pdfUrl = decodePdfUrl(iframe.src)				   
+		   const pdfDataPageTitle = getDataPageTitle(pdfUrl);
+		   const pdfDataPageUid = getPageUid(pdfDataPageTitle);
+		   if(pdfDataPageUid){ //If the data page exists
+				const tableUid = getNthChildUid(pdfDataPageUid, 2);
+				const res = allChildrenInfo(tableUid)[0][0];				
+				window.roamAlphaAPI.deletePage({page: {uid: pdfDataPageUid}});
+				res.children.map(async function(child) {
+					//You can check their existence but seems redundent. 
+					window.roamAlphaAPI.deleteBlock({block: {uid: child.string}})
+				});									
+			}				   
+	   }
+   });
+}
+
+
 ///////////////Wait for roam to fully load then observe
 var roamArticle;
 var roamArticleReady = setInterval(() => {
@@ -120,21 +153,28 @@ function activateButtons() {
         const hlBlockUid = followRef(btnBlockUid);      
         const pdfInfo = getPdfInfoFromHighlight(hlBlockUid);   
         if(pdfInfo){
-          const btnBlock = addBreadcrumb(btn, pdfInfo.uid);
-          const newUrl = encodePdfUrl(pdfInfo.url);
+		  const btnBlock = btn.closest(".rm-block__input");
+		  const page = btn.innerText;		  
+          addBreadcrumb(btnBlock, page, pdfInfo.uid);
+          const newUrl = encodePdfUrl(pdfInfo.url);		  
           //is this MainHilight or ref? could i locate the url?
           if(btnBlockUid == hlBlockUid && pdfInfo.url){           
-            handleMainBtns(btn, btnBlock, newUrl, getSingleHighlight(hlBlockUid));
+            handleMainBtns(btn, page, btnBlock, newUrl, hlBlockUid, getSingleHighlight(hlBlockUid));
           } else { //Referenced highlights   
-            handleRefBtns(btn, btnBlock, newUrl, btnBlockUid, hlBlockUid);       
+			btn.remove();
+            handleRefBtns(page, btnBlock, newUrl, btnBlockUid, hlBlockUid);       
           }
         }
     })
+	activateSortButtons();
+}
+
+function activateSortButtons(){
 	Array.from(document.getElementsByTagName('button'))
 	.filter(isInactiveSortBtn)
 	.forEach(btn => {
 		const sortBtnBlockUid = getUidOfContainingBlock(btn);
-       	btn.classList.add('btn-sort-highlight', 'btn-pdf-activated');
+       	btn.classList.add('btn-sort-highlight');
 		const pdfUid = parentBlockUid(sortBtnBlockUid)
 		const match = blockString(pdfUid).match(/\{{pdf:\s(.*)}}/);
 		if(match[1]){		
@@ -147,6 +187,8 @@ function activateButtons() {
                     return +1	
                 if(a.position.boundingRect.x2 < b.position.boundingRect.x1)
                     return -1
+              	if(b.position.boundingRect.x2 < a.position.boundingRect.x1)
+                    return +1
                 if(a.position.boundingRect.y1 < b.position.boundingRect.y1)	
                     return -1
                 return +1
@@ -158,7 +200,6 @@ function activateButtons() {
 		}
 	})
 }
-
 
 /////////////////////////////////////////////////////////
 ///////////////Portal to the Data Page //////////////////
@@ -209,8 +250,8 @@ function isRoamBtn(btn){
 }
 
 function isInactive(btn){
-	return !btn.classList.contains('btn-pdf-activated')
-		&& !btn.classList.contains('pdf-ctrl');
+	return !btn.classList.contains('btn-pdf-activated');
+		//&& !btn.classList.contains('pdf-ctrl');
 }
 
 function isHighlightBtn(btn){
@@ -239,13 +280,8 @@ function followRef(ref) {
   const res = blockString(ref);  
   if (!res) return ref;
   if (res.indexOf(pdfChar) != -1) return ref;
-  const refMatch = res.match(/\(\((.........)\)\)/);
+  const refMatch = res.match(/\s*\(\((.........)\)\)\s*/);
   return refMatch && res === refMatch[0] ? refMatch[1] : ref;
-}
-
-function getIframeSrc(text){
-  const match = text.match(/\[.*\]\((.*)\)/);
-  return match ? match[1] : null;
 }
 
 function getHighlightsFromTable(uid, sendBlockRefs) {
@@ -272,39 +308,32 @@ function getHighlight(hl, sendBlockRefs) { //the column order is: (hlUid, hlPos,
 ////////////////////////////////////////////////////////////
 ////////Activate of the Main Highlight under the PDF////////
 ////////////////////////////////////////////////////////////
-function handleMainBtns(btn, btnBlock, iframeSrc, highlight){
-  if (highlight) {          
-    btn.classList.add('btn-highlight', 'btn', 'btn-default', 'btn-pdf-activated');
-    /*if(mainHlChar)
-  		btn.innerText = mainHlChar;*/
-  	btn.title = 'Jump to annotation';
-    //Get the hlData block uid from hlText 
-	//Save it in the btn id for the mutation delete observer. 
-  	btn.id = 'main-hlBtn-' + blockString(getUidOfContainingBlock(btn)).match(/{{\d+:\s*(.........)}}/)[1]
-    const aliasRootSpan = btnBlock.querySelector('.rm-alias').parentElement.parentElement.parentElement
-	const pageRootSpan = btnBlock.querySelector('.btn-pdf-activated').parentElement
-  	displaceBtn(btnBlock, "pdf-alias-main", aliasRootSpan)
-	displaceBtn(btnBlock, "main-hl", pageRootSpan)
-  	btn.addEventListener("click", function(){handleMainHighlightClick(btnBlock, iframeSrc, highlight)});
-  }
+function handleMainBtns(btn, pageNumber, btnBlock, iframeSrc, hlBlockUid, highlight){	
+	if (highlight){
+		const btnId = blockString(hlBlockUid).match(/{{\d+:\s*(.........)}}/)[1];		
+		btn.classList.add('btn-main-annotation', 'btn', 'btn-default', 'btn-pdf-activated');
+		btn.id = 'main-hlBtn-' + btnId;
+		btn.addEventListener("click", function(e){handleMainHighlightClick(btnBlock, iframeSrc, highlight)});
+	}
 }
 
-////////Plant the unrooted btn after the roam block separator (at the end of a block)
-function displaceBtn(btnBlock, idPerfix, btn){
-  //Displace Btn
-  const btnId = idPerfix + btnBlock.id;
-  var oldBtn = document.getElementById(btnId)
-  if(oldBtn){
-    oldBtn.previousSibling.remove(); //remove the sep span
-    oldBtn.remove();
-  }
-  btn.id = btnId    
-  var lastEl = btnBlock.parentElement.querySelector('.rm-block-separator')    
-  insertAfter(btn, lastEl)
-  //Insert white space to the Left
-  var sep = document.createElement("span")
-  sep.style.marginLeft = "2px"
-  btnBlock.parentElement.insertBefore(sep, btn)
+////////Plant the unrooted span after the roam block separator (at the end of a block)
+function displaceBtn(btnBlock, rootId, root){
+	//Displace root 
+	var oldBtn = document.getElementById(rootId)
+	if(oldBtn){
+		oldBtn.previousSibling.remove(); //remove the sep span
+		oldBtn.remove();
+	}
+	root.id = rootId;  
+	root.classList.add('span-pdf'); 
+	var lastEl = btnBlock.parentElement.querySelector('.rm-block-separator')    
+	insertAfter(root, lastEl)
+	//Insert white space to the Left
+	var sep = document.createElement("span")
+	sep.classList.add('span-pdf'); 
+	sep.style.marginLeft = "2px"
+	btnBlock.parentElement.insertBefore(sep, root)
 }
 
 ////////Open the PDF and send the HLs to server
@@ -349,23 +378,19 @@ function openPdf(btnBlock, iframeSrc){
 ////////////////////////////////////////////////////////////
 //////////Activation of a Referenced Highlight /////////////
 ////////////////////////////////////////////////////////////
-function handleRefBtns(btn, btnBlock, iframeSrc, btnBlockUid, hlBlockUid){
-  btn.remove();
-  const pdfAliasPerfix = "pdf-alias-ref" 
-  const pdfAliasId = pdfAliasPerfix + btnBlock.id;
-  detachPdfAlias(btnBlock, pdfAliasPerfix, "pdf-alias-clickable");
-  replaceCtrlBtns(btnBlock, btnBlockUid, hlBlockUid, pdfAliasId, iframeSrc);
+function handleRefBtns(pageNumber, btnBlock, iframeSrc, btnBlockUid, hlBlockUid){  
+  const pdfAliasId = 'pdf-alias-ref-'+btnBlock.id;
+  detachPdfAlias(btnBlock, pdfAliasId);
+  replaceCtrlBtns(btnBlock, btnBlockUid, hlBlockUid, pdfAliasId, iframeSrc, pageNumber);
 }
 
 ////////////////////Breadcrumb Addition////////////////////
 ////////////////////Breadcrumb Placement
 var pdf2attr = {}
-function addBreadcrumb(btn, pdfUid){
-  const btnBlock = btn.closest(".rm-block__input");
+function addBreadcrumb(btnBlock, pageNumber, pdfUid){  
   if(!pdf2attr[pdfUid]) pdf2attr[pdfUid] = findPDFAttribute(pdfUid, pdfParams.breadCrumbAttribute)
-  btnBlock.firstChild.setAttribute("title", pdf2attr[pdfUid] + "/Pg" + btn.innerText);  
+  btnBlock.firstChild.setAttribute("title", pdf2attr[pdfUid] + "/Pg" + pageNumber);  
   btnBlock.firstChild.classList.add("breadCrumb");
-  return btnBlock;
 }
 ////////////////////Search the sub-tree of HL/PDF's 
 ////////////////////shared parents for the meta info
@@ -397,50 +422,55 @@ function findPDFAttribute(pdfUid, attribute){
 }
 
 ///////////////////Main Button Replacement//////////////////
-function replaceCtrlBtns(btnBlock, btnBlockUid, hlBlockUid, pdfAliasId, iframeSrc){
-  if(btnBlock.previousSibling.classList.contains("pdf-ctrl")) return null;
+function replaceCtrlBtns(btnBlock, btnBlockUid, hlBlockUid, pdfAliasId, iframeSrc, pageNumber){
+  if(btnBlock.previousSibling.classList.contains('btn-pdf-activated')) return null;
   let btnRepText = null, btnRepAlias = null, btnAnnotation = null;
+  let cssClass;
   if(pdfParams.textChar !== ''){
-    btnRepText = createCtrlBtn(btnBlock, 'btn-rep-text', pdfParams.textChar, 'Replace with text');
+	cssClass = 'btn-rep-text';
+    btnRepText = createCtrlBtn(btnBlock, cssClass, cssClass+"-"+btnBlock.id, pdfParams.textChar, 'Replace with text');
     btnRepText.addEventListener("click", function(e){
       replaceHl(btnRepText, btnRepAlias, btnAnnotation, btnBlockUid, hlBlockUid, 1, pdfAliasId)});
   }
   if(pdfParams.aliasChar !== ''){
-    btnRepAlias = createCtrlBtn(btnBlock, 'btn-rep-alias', pdfParams.aliasChar, 'Replace with alias');
+	cssClass = 'btn-rep-alias';
+    btnRepAlias = createCtrlBtn(btnBlock, cssClass, cssClass+"-"+btnBlock.id, pdfParams.aliasChar, 'Replace with alias');
   	btnRepAlias.addEventListener("click", function(){
       replaceHl(btnRepText, btnRepAlias, btnAnnotation, btnBlockUid, hlBlockUid, 0, pdfAliasId)});
   }
   
-  if(pdfParams.refHlChar !== ''){
-    btnAnnotation = createCtrlBtn(btnBlock, 'btn-annotation', pdfParams.refHlChar, 'Jump to annotation')
+  //if(pdfParams.refHlChar !== ''){
+    //btnAnnotation = createCtrlBtn(btnBlock, 'btn-annotation', pdfParams.refHlChar, 'Jump to annotation')
+	cssClass = 'btn-ref-annotation';
+	btnAnnotation = createCtrlBtn(btnBlock, cssClass, cssClass+"-"+btnBlock.id, pageNumber, 'Jump to annotation')
     btnAnnotation.addEventListener("click", function(){
       jumpToAnnotation(btnBlock, hlBlockUid, iframeSrc)});
-  }
+  //}
 }  
 
-function createCtrlBtn(btnBlock, cssClass, text, hoverTxt){
+function createCtrlBtn(btnBlock, cssClass, newBtnId, btnText, hoverTxt){
     const newBtn = document.createElement('button');
-    newBtn.classList.add(cssClass, 'btn', 'btn-default', "pdf-ctrl");
-	newBtn.innerText = text;
+    newBtn.classList.add(cssClass, 'btn', 'btn-default', 'btn-pdf-activated');
+	newBtn.innerText = btnText;
     newBtn.title = hoverTxt;
-	displaceBtn(btnBlock, cssClass, newBtn)
+	displaceBtn(btnBlock, newBtnId, newBtn)
     return newBtn;
 }
 
 
 ///////////////////PDF Alias Insertion///////////////////
-function detachPdfAlias(btnBlock, pdfAliasPerfix, clickablePerfix){
-  var clickable = btnBlock.querySelector(".rm-alias");
-  clickable.id = clickablePerfix + btnBlock.id;
+function detachPdfAlias(btnBlock, pdfAliasId){
+  var clickable = Array.from(btnBlock.querySelectorAll(".rm-alias"))
+  .filter(x => {return x.innerText === '📑'})[0];  
+  const aliasRootSpan = clickable.parentElement.parentElement.parentElement  
+  displaceBtn(btnBlock, pdfAliasId, aliasRootSpan)  
   clickable.addEventListener('click', async function(e) {
     if(e.shiftKey){
-      await pdfSleep(200);      
+      await pdfSleep(5000);      
       const closeButton = document.getElementById("roam-right-sidebar-content").querySelector("span.bp3-icon-cross");
 	  closeButton.dispatchEvent( new MouseEvent('click', { view: window, bubbles: true, cancelable: true, buttons: 1 }) );
    }
   });
-  const aliasRootSpan = clickable.parentElement.parentElement.parentElement  
-  displaceBtn(btnBlock, pdfAliasPerfix, aliasRootSpan)  
 }  
 
 
@@ -448,17 +478,29 @@ function detachPdfAlias(btnBlock, pdfAliasPerfix, clickablePerfix){
 ///////////////HL Reference Replacement: As Text or Alias
 function replaceHl(btnRepText, btnRepAlias, btnAnnotation, btnBlockUid, hlBlockUid, asText, pdfAliasId) {
   const hl = blockString(hlBlockUid);
-  const hlTextStartIndex = hl.indexOf(")))") + 3;
-  const hlText = hl.substring(hlTextStartIndex);
+  const match = hl.match(/\{\{\d+:\s*.........\}\}\s*\[📑\]\(\(\(.........\)\)\)/)
+  const hlText = hl.substring(0, match.index);
   const hlAlias = hlText + "[*](((" + hlBlockUid + ")))";
   if(asText)
   	window.roamAlphaAPI.updateBlock({"block":{"uid": btnBlockUid,"string": hlText}});
   else
 	window.roamAlphaAPI.updateBlock({"block":{"uid": btnBlockUid,"string": hlAlias}});
-  btnRepText?.remove();
-  btnRepAlias?.remove();
-  btnAnnotation?.remove();
-  document.getElementById(pdfAliasId)?.remove();
+  
+  const pdfAlias = document.getElementById(pdfAliasId)
+  pdfAlias.previousSibling.remove();
+  pdfAlias.remove();
+  
+  if(pdfParams.textChar !== ''){
+	btnRepText.previousSibling.remove();
+	btnRepText.remove();
+  }
+  if(pdfParams.aliasChar !== ''){
+	btnRepAlias.previousSibling.remove();
+	btnRepAlias.remove();
+  }  
+  btnAnnotation.previousSibling.remove();
+  btnAnnotation.remove();
+  
 }
 
 
@@ -467,7 +509,7 @@ async function jumpToAnnotation(btnBlock, hlBlockUid, iframeSrc) {
   var iframe =  getOpenIframeElementWithSrc(iframeSrc);
   if(!iframe){ //Iframe is closed
 	iframe = openPdf(btnBlock, iframeSrc); 
-	await pdfSleep(5000); //Let PDF loads
+	await pdfSleep(7000); //Let PDF loads
     iframe = getOpenIframeElementWithSrc(iframeSrc);
   } 
   iframe.contentWindow.postMessage({scrollTo: getSingleHighlight(hlBlockUid)}, '*');
@@ -511,7 +553,7 @@ function getUncleBlock(pdfBlockUid){
   var dictUid2Ord = {};
   var dictOrd2Uid = {};
   if(!gParentBlockUid) return null;
-  const mainBlocksUid = allChildrenUid(gParentBlockUid);  
+  const mainBlocksUid = allChildrenInfo(gParentBlockUid);  
   mainBlocksUid[0][0].children.map(child => {
     dictUid2Ord[child.uid] = child.order;
     dictOrd2Uid[child.order] = child.uid;
@@ -527,6 +569,7 @@ function getUncleBlock(pdfBlockUid){
 
 ////////////Write the Highlight Text Using the Given Format
 var pdf2citeKey = {}  
+var pdf2pgOffset = {}  
 function writeHighlightText(pdfBlockUid, hlTextUid, hlBtn, hlContent, pdfAlias, page){  
   let hlParentBlockUid;
   if(pdfParams.outputHighlighAt === 'cousin'){
@@ -535,16 +578,22 @@ function writeHighlightText(pdfBlockUid, hlTextUid, hlBtn, hlContent, pdfAlias, 
   } else { //outputHighlighAt ==='child'
     hlParentBlockUid = pdfBlockUid
   }    
-  const perfix = pdfParams.blockQ ? '[[>]]' : '';      
+  var perfix = pdfParams.blockQ ? '[[>]]' : '';      
   var Citekey = '';
   if(pdfParams.citationFormat !== ''){
     if(!pdf2citeKey[pdfBlockUid]) {
     	pdf2citeKey[pdfBlockUid] = findPDFAttribute(pdfBlockUid, "Citekey")  
     }
-    Citekey = pdf2citeKey[pdfBlockUid]
+	if(!pdf2pgOffset[pdfBlockUid]) {
+		const tempOffset = parseInt(findPDFAttribute(pdfBlockUid, "Page Offset"));
+		pdf2pgOffset[pdfBlockUid] = isNaN(tempOffset) ? 0 : tempOffset;
+	}
+    Citekey = pdf2citeKey[pdfBlockUid];	
+	page = page - pdf2pgOffset[pdfBlockUid];
   } 
-  const citation = eval('`'+pdfParams.citationFormat+'`').replace(/\s+/g, '');
-  const hlText = perfix+" "+hlBtn+" "+pdfAlias+" "+hlContent+" "+citation;
+  var citation = eval('`'+pdfParams.citationFormat+'`').replace(/\s+/g, '');
+  var hlText = perfix+" "+hlContent+" "+citation+" "+hlBtn+" "+pdfAlias;
+  //var hlText = perfix+" "+hlBtn+" "+pdfAlias+" "+hlContent+" "+citation;
   const ord = pdfParams.appendHighlight ? 9999999 : 0;
   createChildBlock(hlParentBlockUid, ord, hlText, hlTextUid);
 
@@ -573,7 +622,7 @@ var allPdfIframes = []; //History of opened pdf on page
 var activePdfIframeId = null; //Last active pdf iframe.id
 
 window.addEventListener('blur', function() {
-  var iframeIds = allPdfIframes.map(function(item){return item.id;});
+  //var iframeIds = allPdfIframes.map(function(item){return item.id;});
   activePdfIframe = allPdfIframes.find(x => x === document.activeElement);
   activePdfIframeId = activePdfIframe?.id;  	
 });
@@ -652,9 +701,9 @@ function blockString(blockUid){
 	  :where [?block :block/uid \"${blockUid}\"]]`)[0][0].string
 }
 
-function allChildrenUid(blockUid){
+function allChildrenInfo(blockUid){
   return window.roamAlphaAPI.q(
-    `[:find (pull ?parent [* {:block/children [:block/uid :block/order]}])
+    `[:find (pull ?parent [* {:block/children [:block/string :block/uid :block/order]}])
     :where
 		[?parent :block/uid \"${blockUid}\"]]`)
 }
@@ -694,7 +743,7 @@ function decodePdfUrl(url){
 }
 
 function getNthChildUid(parentUid, order){
-  const allChildren = allChildrenUid(parentUid)[0][0].children;
+  const allChildren = allChildrenInfo(parentUid)[0][0].children;
   const childrenOrder = allChildren.map(function(child){return child.order;});
   const index = childrenOrder.findIndex(el => el === order);
   return index !== -1 ? allChildren[index].uid : null;
@@ -704,11 +753,9 @@ pdfSleep = m => new Promise(r => setTimeout(r, m))
 
 function createPage(pageTitle){  
   var pageUid = createUid()
-  const status = window
-    .roamAlphaAPI
-    .createPage(
-    {"page":
-     {"title": pageTitle, "uid": pageUid}})
+  const status = window.roamAlphaAPI.createPage(
+					{"page":
+						{"title": pageTitle, "uid": pageUid}})
   return status ? pageUid : null
 }
 
@@ -741,4 +788,5 @@ function createUid(){
   };
   return nanoid(9);
 }
+
 /*********Helper API Wrapper Functions END************/

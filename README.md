@@ -20,32 +20,31 @@ To install, do the same thing you do for any roam/js script.
 
    ``` javascript
    window.pdfParams = {
-   	//Highlight Placement, Order, and Sort
-   	outputHighlighAt : 'cousin', //cousin, child
-       appendHighlight  : true, //append: true, prepend: false
-   	breadCrumbAttribute : 'Title', //Title, Author, Citekey, etc.
-   	copyBlockRef : true,//false: copy captured text
-     	sortBtnText  : 'Display Sorted Highlights',
-   	//Rerference Highlight Buttons
-   	refHlChar : '⚡', //use '' to disable
-   	aliasChar : '✳', //use '' to disable
-   	textChar : 'T', //use '' to disable	
-   	//Viewer
-   	pdfStaticHeight : 900,
-   	pdfStaticWidth : 1200,
-   	pdfMinWidth : 450,
-   	pdfMinHeight : 900,
-   	///Citation Format 
-   	blockQ : false,//true: adds [[>]] to the hls.	
-   	//use Citekey and page in any formating string 
-     	//common usecase: 
-   	////Zotero imports with 'roam page title' = @Citekey and Citekey attribute
-       ////Examples
-     	//"[${Citekey}]([[@${Citekey}]])" 
-     	//"[(${Citekey}, ${page})]([[@${Citekey}]])" 
-   	//use '' to disable  
-   	citationFormat : "[(${Citekey}, ${page})]([[@${Citekey}]])",	
-   };
+		//Highlight Placement, Order, and Sort
+		outputHighlighAt : 'cousin', //cousin, child
+		appendHighlight  : true, //append: true, prepend: false
+		breadCrumbAttribute : 'Title', //Title, Author, Citekey, etc.
+		copyBlockRef : true,//false: copy captured text
+		sortBtnText  : 'sort them all!',
+		//Rerference Highlight Buttons
+		aliasChar : '✳', //use '' to disable
+		textChar : 'T', //use '' to disable	
+		//Viewer
+		pdfStaticHeight : 900,
+		pdfStaticWidth : 1200,
+		pdfMinWidth : 450,
+		pdfMinHeight : 900,
+		///Citation Format 
+		blockQ : false,//true: adds [[>]] to the hls.	
+		//use Citekey and page in any formating string 
+		//common usecase: 
+		////Zotero imports with 'roam page title' = @Citekey and Citekey attribute
+		////Examples
+		//"[${Citekey}]([[@${Citekey}]])" 
+		//"[(${Citekey}, ${page})]([[@${Citekey}]])" 
+		//use '' to disable  
+		citationFormat : ''
+	};
    
    var s = document.createElement("script");
    s.type = "text/javascript";

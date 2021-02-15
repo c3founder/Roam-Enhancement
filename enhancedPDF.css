@@ -1,5 +1,5 @@
 /*All btns*/
-.btn{padding: 0px !important;  border: 0px !important;}
+.btn{padding: 0px !important;  border: 3px !important;}
 
 /*All main highlight btns*/
 .btn-pdf-activated{
@@ -8,17 +8,22 @@
   font-weight: bold;
   min-width: 18px !important;
   min-height: 18px !important;
+  margin-top: 3px !important;
+}
+
+.btn-main-annotation{
+  background-color : rgb(221,220,220) !important;
+  color: rgb(0,0,0); 
+  margin-top: 0px !important;
 }
 
 /*All reference to highlight buttons*/
-.pdf-ctrl{
-  font-size: 12px !important;
-  margin-top: 4px !important;
-}
-
 .btn-rep-text{
 }
 .btn-rep-alias{
 }
-.btn-annotation{
+.btn-ref-annotation{
+  background-image: linear-gradient(rgb(249,249,49), rgb(246,246,170), rgb(210,210,9));
+  color: rgb(6,6,6);
 }
+
