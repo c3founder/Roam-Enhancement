@@ -29,7 +29,7 @@ const pdfParams = window.pdfParams;
 /*******************************************************/
 /**********************Main BEGIN***********************/
 window.setInterval(initPdf, 1000);
-const serverPerfix = 'http://localhost:3000/?url=';
+const serverPerfix = 'https://roampdf.web.app/?url=';
 const pdfChar = '📑';
 //const mainHlChar = null;
 //refHlChar : '⚡', //use '' to disable
