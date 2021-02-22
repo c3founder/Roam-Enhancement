@@ -2,7 +2,7 @@
 // @name         Enhanced-PDF Extension for Roam Research
 // @author       Ryan Muller @cicatriz and Connected Cognition Crumbs <c3founder@gmail.com>
 // @require 	 -
-// @version      0.6
+// @version      0.7
 // @match        https://*.roamresearch.com
 // @description  Handle PDF Highlights.  
 //		 MAIN OUTPUT MODES: 
@@ -31,8 +31,7 @@ const pdfParams = window.pdfParams;
 window.setInterval(initPdf, 1000);
 const serverPerfix = 'https://roampdf.web.app/?url=';
 const pdfChar = '📑';
-//const mainHlChar = null;
-//refHlChar : '⚡', //use '' to disable
+
 
 function initPdf() {
   Array.from(document.getElementsByTagName('iframe')).forEach(iframe => {
@@ -81,8 +80,8 @@ var hlDeletionObserver = new MutationObserver(mutations => {
     mutation.removedNodes.forEach(node => {
       if(typeof(node.classList) !== 'undefined'){
         if(node.classList.contains("roam-block-container")){ //if a block is deleted
-             handleHighlightDelete(node) 
-			 handlePdfDelete(node)  
+            handleHighlightDelete(node) 
+			      handlePdfDelete(node)  
           }
         }
 	});
@@ -95,7 +94,7 @@ function handleHighlightDelete(node){
    .forEach(async function(btn){
 	  const match = btn.id.match(/main-hlBtn-(.........)/)  
 	  if(match){
-		if(existBlockUid(match[1])){//If the datae page was deleted ignore 
+		if(existBlockUid(match[1])){//If the data page was deleted ignore 
 			await pdfSleep(5000) //Maybe someone is moving blocks or undo                  
 			if(!existBlockUid(blockString(match[1])))
 				window.roamAlphaAPI.deleteBlock({"block": {"uid": match[1]}})
@@ -179,7 +178,7 @@ function activateSortButtons(){
 		const match = blockString(pdfUid).match(/\{{pdf:\s(.*)}}/);
 		if(match[1]){		
 			const pdfUrl = match[1];
-			var highlights = getAllHighlights(pdfUrl, pdfUid, true)
+			var highlights = getAllHighlights(pdfUrl, pdfUid)
 			highlights.sort(function(a, b){
                 if(a.position.pageNumber < b.position.pageNumber)
                     return -1
@@ -284,9 +283,9 @@ function followRef(ref) {
   return refMatch && res === refMatch[0] ? refMatch[1] : ref;
 }
 
-function getHighlightsFromTable(uid, sendBlockRefs) {
+function getHighlightsFromTable(uid) {
   const hls = queryAllTxtInChildren(uid)[0][0].children;  
-  return hls.map(function(x) {return getHighlight(x, sendBlockRefs);}).filter(hl => hl != null);
+  return hls.map(function(x) {return getHighlight(x);}).filter(hl => hl != null);
 }
 
 function getTextFromNestedNodes(node, texts) {
@@ -295,14 +294,11 @@ function getTextFromNestedNodes(node, texts) {
     node.children.forEach(child => getTextFromNestedNodes(child, texts))
 }
 
-function getHighlight(hl, sendBlockRefs) { //the column order is: (hlUid, hlPos, hlTxt)
+function getHighlight(hl) { //the column order is: (hlUid, hlPos, hlTxt)
 	const position = JSON.parse(hl.children[0].string);
 	const hlText = hl.children[0].children[0].string;  
-	if(sendBlockRefs){
-		const blockRef = hl.string 
-		return { blockRef, content: { text: hlText }, position };
-	}	
-	return { content: { text: hlText }, position };  
+	const id = hl.string 
+  return { id, content: { text: hlText }, position };
 }
 
 ////////////////////////////////////////////////////////////
@@ -439,13 +435,10 @@ function replaceCtrlBtns(btnBlock, btnBlockUid, hlBlockUid, pdfAliasId, iframeSr
       replaceHl(btnRepText, btnRepAlias, btnAnnotation, btnBlockUid, hlBlockUid, 0, pdfAliasId)});
   }
   
-  //if(pdfParams.refHlChar !== ''){
-    //btnAnnotation = createCtrlBtn(btnBlock, 'btn-annotation', pdfParams.refHlChar, 'Jump to annotation')
 	cssClass = 'btn-ref-annotation';
 	btnAnnotation = createCtrlBtn(btnBlock, cssClass, cssClass+"-"+btnBlock.id, pageNumber, 'Jump to annotation')
     btnAnnotation.addEventListener("click", function(){
       jumpToAnnotation(btnBlock, hlBlockUid, iframeSrc)});
-  //}
 }  
 
 function createCtrlBtn(btnBlock, cssClass, newBtnId, btnText, hoverTxt){
@@ -522,28 +515,36 @@ async function jumpToAnnotation(btnBlock, hlBlockUid, iframeSrc) {
 window.addEventListener('message', handleRecievedHighlight, false);
 
 ///////////Recieve Highlight Data, Output Highlight Text, Store HL Data 
-function handleRecievedHighlight(event) {
-  if (!event.data.highlight) return;  
-  if(event.data.highlight.position.rects.length == 0){
-    event.data.highlight.position.rects[0] = event.data.highlight.position.boundingRect;
-  }  
-  const page = event.data.highlight.position.pageNumber;
-  const hlPosition = JSON.stringify(event.data.highlight.position);
-  const iframe = document.getElementById(activePdfIframeId);
-  const pdfBlockUid = getUidOfContainingBlock(iframe);
-  let hlContent; 
-  const pdfAlias = `[${pdfChar}](((${pdfBlockUid})))`;
-  const hlDataUid = createUid(); 
-  const hlTextUid = createUid();
-  const hlBtn = `{{${page}: ${hlDataUid}}}`;
-    
-  if (event.data.highlight.imageUrl) {
-    hlContent = `![](${event.data.highlight.imageUrl})`;   
-  } else {
-  	hlContent = `${event.data.highlight.content.text}`;
-  }  
-  writeHighlightText(pdfBlockUid, hlTextUid, hlBtn, hlContent, pdfAlias, page);
-  saveHighlightData(pdfBlockUid, decodePdfUrl(iframe.src), hlDataUid , hlTextUid, hlPosition, hlContent);
+function handleRecievedHighlight(event) {  
+  if(event.data.deleted){
+    const toDeleteHlTextUid = event.data.deleted.id; 
+    const toDeleteHlDataRowUid = getHighlightDataAddress(toDeleteHlTextUid)
+    window.roamAlphaAPI.deleteBlock({"block": {"uid": toDeleteHlTextUid}})
+    window.roamAlphaAPI.deleteBlock({"block": {"uid": toDeleteHlDataRowUid}})
+    return;    
+  }
+  if(event.data.highlight){
+    if(event.data.highlight.position.rects.length == 0){
+      event.data.highlight.position.rects[0] = event.data.highlight.position.boundingRect;
+    }  
+    const page = event.data.highlight.position.pageNumber;
+    const hlPosition = JSON.stringify(event.data.highlight.position);
+    const iframe = document.getElementById(activePdfIframeId);
+    const pdfBlockUid = getUidOfContainingBlock(iframe);
+    let hlContent; 
+    const pdfAlias = `[${pdfChar}](((${pdfBlockUid})))`;
+    const hlDataUid = createUid(); 
+    const hlTextUid = createUid(); //event.data.highlight.id; //createUid();
+    const hlBtn = `{{${page}: ${hlDataUid}}}`;
+      
+    if (event.data.highlight.imageUrl) {
+      hlContent = `![](${event.data.highlight.imageUrl})`;   
+    } else {
+      hlContent = `${event.data.highlight.content.text}`;
+    }  
+    writeHighlightText(pdfBlockUid, hlTextUid, hlBtn, hlContent, pdfAlias, page);
+    saveHighlightData(pdfBlockUid, decodePdfUrl(iframe.src), hlDataUid , hlTextUid, hlPosition, hlContent);
+  }   
 } 
 
 ///////////For the Cousin Output Mode: Find the Uncle of the PDF Block. 
@@ -572,13 +573,15 @@ var pdf2citeKey = {}
 var pdf2pgOffset = {}  
 function writeHighlightText(pdfBlockUid, hlTextUid, hlBtn, hlContent, pdfAlias, page){  
   let hlParentBlockUid;
+  //Find where to write
   if(pdfParams.outputHighlighAt === 'cousin'){
     hlParentBlockUid = getUncleBlock(pdfBlockUid);
     if(!hlParentBlockUid) hlParentBlockUid = pdfBlockUid; //there is no gparent, write hl as a child
   } else { //outputHighlighAt ==='child'
     hlParentBlockUid = pdfBlockUid
   }    
-  var perfix = pdfParams.blockQ ? '[[>]]' : '';      
+  //Make the citation
+  var perfix = pdfParams.blockQ ? '[[>]] ' : '';      
   var Citekey = '';
   if(pdfParams.citationFormat !== ''){
     if(!pdf2citeKey[pdfBlockUid]) {
@@ -591,12 +594,20 @@ function writeHighlightText(pdfBlockUid, hlTextUid, hlBtn, hlContent, pdfAlias, 
     Citekey = pdf2citeKey[pdfBlockUid];	
 	page = page - pdf2pgOffset[pdfBlockUid];
   } 
-  var citation = eval('`'+pdfParams.citationFormat+'`').replace(/\s+/g, '');
-  var hlText = perfix+" "+hlContent+" "+citation+" "+hlBtn+" "+pdfAlias;
-  //var hlText = perfix+" "+hlBtn+" "+pdfAlias+" "+hlContent+" "+citation;
-  const ord = pdfParams.appendHighlight ? 9999999 : 0;
+  const citation = eval('`'+pdfParams.citationFormat+'`').replace(/\s+/g, '');
+  const hlText = `${perfix}${hlContent}${citation} ${hlBtn} ${pdfAlias}`;
+  //Where to put: Append on top or bottom
+  let ord = 0 
+  if(pdfParams.appendHighlight){
+    const children = allChildrenInfo(hlParentBlockUid)[0][0].children; 
+    if(typeof(children) === 'undefined') 
+      ord = 0;
+    else
+      ord = Math.max(...children.map(child => child.order)) + 1;
+  }  
+  //Finally: writing
   createChildBlock(hlParentBlockUid, ord, hlText, hlTextUid);
-
+  //What to put in clipboard
   if(pdfParams.copyBlockRef)
     navigator.clipboard.writeText("(("+hlTextUid+"))");
   else
@@ -622,7 +633,6 @@ var allPdfIframes = []; //History of opened pdf on page
 var activePdfIframeId = null; //Last active pdf iframe.id
 
 window.addEventListener('blur', function() {
-  //var iframeIds = allPdfIframes.map(function(item){return item.id;});
   activePdfIframe = allPdfIframes.find(x => x === document.activeElement);
   activePdfIframeId = activePdfIframe?.id;  	
 });
@@ -638,15 +648,15 @@ function renderPdf(iframe) {
 
 /////////////////////Send Old Saved Highlights to Server to Render
 function sendHighlights(iframe, originalPdfUrl, pdfBlockUid) {    
-  const highlights = getAllHighlights(originalPdfUrl, pdfBlockUid, false);
+  const highlights = getAllHighlights(originalPdfUrl, pdfBlockUid);
   window.setTimeout( // give it 5 seconds to load
     () => iframe.contentWindow.postMessage({highlights}, '*'), 2000);
 }
 
 /////////////////////From PDF URL => Data Page => Retrieve Data
-function getAllHighlights(pdfUrl, pdfUid, sendBlockRefs){  
+function getAllHighlights(pdfUrl, pdfUid){  
   const dataTableUid = getDataTableUid(pdfUrl, pdfUid);
-  return getHighlightsFromTable(dataTableUid, sendBlockRefs);
+  return getHighlightsFromTable(dataTableUid);
 }
 
 function getDataTableUid(pdfUrl, pdfUid){
@@ -774,9 +784,9 @@ function hashCode(str){
 function createChildBlock(parentUid, order, childString, childUid){
   return window.roamAlphaAPI.createBlock(
     {
-      "location": {"parent-uid": parentUid, "order": order}, 
-      "block": {"string": childString, "uid": childUid}
-    })
+      location: {"parent-uid": parentUid, order: order}, 
+      block: {string: childString.toString(), uid: childUid}
+    }) 
 }
 
 function createUid(){
