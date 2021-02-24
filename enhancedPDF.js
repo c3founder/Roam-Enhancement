@@ -413,8 +413,9 @@ function findPDFAttribute(pdfUid, attribute){
 		  (ancestor ?block ?gblock)
 	   	  [?gblock :block/uid \"${gParentRef}\"]]`, ancestorrule)  
    if(!res.length) return ''; 
-   const attrString = res[0][0].string
-   return attrString.substring(attrString.indexOf(attribute) + attribute.length + 2)
+   // match attribute: or attribute::
+   const attrMatch = new RegExp(`^${attribute}::?\\s+(.*)$`);
+   return res[0][0].string.match(attrMatch)[1];
 }
 
 ///////////////////Main Button Replacement//////////////////
