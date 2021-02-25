@@ -35,7 +35,7 @@ To install, do the same thing you do for any roam/js script.
 		pdfMinWidth : 450,
 		pdfMinHeight : 900,
 		///Citation Format 
-		blockQ : false,//true: adds [[>]] to the hls.	
+		blockQPerfix: '',//use '' to disable. Alternatives are: > or [[>]].
 		//use Citekey and page in any formating string 
 		//common usecase: 
 		////Zotero imports with 'roam page title' = @Citekey and Citekey attribute

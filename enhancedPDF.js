@@ -2,7 +2,7 @@
 // @name         Enhanced-PDF Extension for Roam Research
 // @author       Ryan Muller @cicatriz and Connected Cognition Crumbs <c3founder@gmail.com>
 // @require 	 -
-// @version      0.7
+// @version      0.8
 // @match        https://*.roamresearch.com
 // @description  Handle PDF Highlights.  
 //		 MAIN OUTPUT MODES: 
