@@ -20,30 +20,39 @@ To install, do the same thing you do for any roam/js script.
 
    ``` javascript
    window.pdfParams = {
-		//Highlight Placement, Order, and Sort
-		outputHighlighAt : 'cousin', //cousin, child
-		appendHighlight  : true, //append: true, prepend: false
-		breadCrumbAttribute : 'Title', //Title, Author, Citekey, etc.
-		copyBlockRef : true,//false: copy captured text
-		sortBtnText  : 'sort them all!',
-		//Rerference Highlight Buttons
-		aliasChar : '✳', //use '' to disable
-		textChar : 'T', //use '' to disable	
-		//Viewer
-		pdfStaticHeight : 900,
-		pdfStaticWidth : 1200,
-		pdfMinWidth : 450,
-		pdfMinHeight : 900,
-		///Citation Format 
-		blockQPerfix: '',//use '' to disable. Alternatives are: > or [[>]].
-		//use Citekey and page in any formating string 
-		//common usecase: 
-		////Zotero imports with 'roam page title' = @Citekey and Citekey attribute
-		////Examples
-		//"[${Citekey}]([[@${Citekey}]])" 
-		//"[(${Citekey}, ${page})]([[@${Citekey}]])" 
-		//use '' to disable  
-		citationFormat : ''
+	  //Highlight 
+	  ///Placement
+	  outputHighlighAt: 'cousin', //cousin, child
+	  highlightHeading: '**Highlights**', //for cousin mode only 
+	  appendHighlight: true, //append: true, prepend: false
+	  ///Rest of Highlight Options
+	  breadCrumbAttribute: 'Title', //Title, Author, Citekey, etc. 
+	  addColoredHighlight: true,//bring the color of highlights into your graph
+	  //Rerference to Highlight 
+	  ///Block References Related
+	  copyBlockRef: true,//false: copy captured text
+	  sortBtnText: 'sort them all!',//{{sort them all!}} button will sorted highlight references.
+	  ///Block Reference Buttons  
+	  aliasChar: '✳', //use '' to disable
+	  textChar: 'T', //use '' to disable	
+	  //PDF Viewer
+	  pdfStaticHeight: 900,
+	  pdfStaticWidth: 1200,
+	  pdfMinWidth: 450,
+	  pdfMinHeight: 900,
+	  //Citation 
+	  ///Format   
+	  ////use Citekey and page in any formating string 
+	  ////page can be offset by `Page Offset` attribute. 
+	  ////common usecase: 
+	  /////Zotero imports with 'roam page title' = @Citekey and Citekey attribute
+	  ////examples:
+	  /////"[${Citekey}]([[@${Citekey}]])" 
+	  /////"[(${Citekey}, ${page})]([[@${Citekey}]])" 
+	  /////use '' to disable  
+	  citationFormat: '',
+	  ///BlockQuote 
+	  blockQPerfix: ''//use '' to disable. Alternatives are: > or [[>]].
 	};
    
    var s = document.createElement("script");
