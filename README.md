@@ -20,8 +20,7 @@ To install, do the same thing you do for any roam/js script.
 
    ``` javascript
    window.pdfParams = {
-<<<<<<< HEAD
-     //Highlight 
+	 //Highlight 
      ///Placement
      outputHighlighAt: 'cousin', //cousin, child
      highlightHeading: '**Highlights**', //for cousin mode only 
@@ -55,48 +54,12 @@ To install, do the same thing you do for any roam/js script.
      ///BlockQuote 
      blockQPerfix: ''//use '' to disable. Alternatives are: > or [[>]].
    };
-=======
-	  //Highlight 
-	  ///Placement
-	  outputHighlighAt: 'cousin', //cousin, child
-	  highlightHeading: '**Highlights**', //for cousin mode only 
-	  appendHighlight: true, //append: true, prepend: false
-	  ///Rest of Highlight Options
-	  breadCrumbAttribute: 'Title', //Title, Author, Citekey, etc. 
-	  addColoredHighlight: true,//bring the color of highlights into your graph
-	  //Rerference to Highlight 
-	  ///Block References Related
-	  copyBlockRef: true,//false: copy captured text
-	  sortBtnText: 'sort them all!',//{{sort them all!}} button will sorted highlight references.
-	  ///Block Reference Buttons  
-	  aliasChar: '✳', //use '' to disable
-	  textChar: 'T', //use '' to disable	
-	  //PDF Viewer
-	  pdfStaticHeight: 900,
-	  pdfStaticWidth: 1200,
-	  pdfMinWidth: 450,
-	  pdfMinHeight: 900,
-	  //Citation 
-	  ///Format   
-	  ////use Citekey and page in any formating string 
-	  ////page can be offset by `Page Offset` attribute. 
-	  ////common usecase: 
-	  /////Zotero imports with 'roam page title' = @Citekey and Citekey attribute
-	  ////examples:
-	  /////"[${Citekey}]([[@${Citekey}]])" 
-	  /////"[(${Citekey}, ${page})]([[@${Citekey}]])" 
-	  /////use '' to disable  
-	  citationFormat: '',
-	  ///BlockQuote 
-	  blockQPerfix: ''//use '' to disable. Alternatives are: > or [[>]].
-	};
->>>>>>> 937f5fc794871b2bd336fc24b53b97c31bb21f72
    
-   var s = document.createElement("script");
-   s.type = "text/javascript";
-   s.src = "https://c3founder.github.io/Roam-Enhancement/enhancedPDF.js";
-   document.getElementsByTagName("head")[0].appendChild(s);
-   ```
+	var s = document.createElement("script");
+	s.type = "text/javascript";
+	s.src = "https://c3founder.github.io/Roam-Enhancement/enhancedPDF.js";
+	document.getElementsByTagName("head")[0].appendChild(s);
+	```
 
 1. A warning box shows up asking you to review the risks of using roam/js.
 
@@ -108,13 +71,13 @@ To install, do the same thing you do for any roam/js script.
 
 To install the CSS put this line in a CSS code block on you [[roam/css]] page: 
 
-~~~css
+```css
 @import url('https://c3founder.github.io/Roam-Enhancement/enhancedPDF.css');
-~~~
+```
 
 ## Functionalities   
-
-
+Full tutorial here: 
+- [![pdfhighlighter](https://img.youtube.com/vi/-yVqQqUEHKI/0.jpg)](https://www.youtube.com/watch?v=-yVqQqUEHKI&ab_channel=CCC)
 
 # Enhanced YouTube Player for Roam Research
 
@@ -166,8 +129,8 @@ To install, do the same thing you do for any roam/js script.
 	s.type = "text/javascript";
 	s.src = "https://c3founder.github.io/Roam-Enhancement/enhancedYouTube.js";
 	document.getElementsByTagName("head")[0].appendChild(s);
-	```
-	
+   ```
+
 1. A warning box shows up asking you to review the risks of using roam/js.
 
 1. Once you have reviewed the warning and understand/accept the risk, click Yes.
