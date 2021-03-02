@@ -48,7 +48,7 @@ function initPdf() {
       } catch { } // some iframes have invalid src
     }
     if (iframe.src.startsWith(serverPerfix)) {
-      var sideBarOpen = document.getElementById("right-sidebar").childElementCount - 1;
+      let sideBarOpen = document.getElementById("right-sidebar").childElementCount - 1;
       adjustPdfIframe(iframe, sideBarOpen);
     }
   })
@@ -75,7 +75,7 @@ function adjustPdfIframe(iframe, sideBarOpen) {
 
 /*******************************************************/
 /*************Look for Highlight Delete BEGIN***********/
-var hlDeletionObserver = new MutationObserver(mutations => {
+let hlDeletionObserver = new MutationObserver(mutations => {
   mutations.forEach(mutation => {
     mutation.removedNodes.forEach(node => {
       if (typeof (node.classList) !== 'undefined') {
@@ -142,8 +142,8 @@ function handlePdfDelete(node) {
 
 
 ///////////////Wait for roam to fully load then observe
-var roamArticle;
-var roamArticleReady = setInterval(() => {
+let roamArticle;
+let roamArticleReady = setInterval(() => {
   if (!document.querySelector('.roam-app')) return;
   roamArticle = document.querySelector('.roam-app')
   hlDeletionObserver.observe(roamArticle, {
@@ -194,7 +194,7 @@ function activateSortButtons() {
       const match = blockString(pdfUid).match(/\{{pdf:\s(.*)}}/);
       if (match[1]) {
         const pdfUrl = match[1];
-        var highlights = getAllHighlights(pdfUrl, pdfUid)
+        let highlights = getAllHighlights(pdfUrl, pdfUid)
         highlights.sort(function (a, b) {
           if (a.position.pageNumber < b.position.pageNumber)
             return -1
@@ -208,7 +208,7 @@ function activateSortButtons() {
             return -1
           return +1
         });
-        var cnt = 0
+        let cnt = 0
         btn.onclick = () =>
           highlights.map(function (item) { createChildBlock(sortBtnBlockUid, cnt++, "((" + item.id + "))", createUid()); })
 
@@ -221,7 +221,7 @@ function activateSortButtons() {
 /////////////////////////////////////////////////////////
 ///////////////From highlight => Data page => Retrieve PDF url and uid.
 function getPdfInfoFromHighlight(hlBlockUid) {
-  var match = blockString(hlBlockUid).match(/\[📑]\(\(\((.........)\)\)\)/);
+  let match = blockString(hlBlockUid).match(/\[📑]\(\(\((.........)\)\)\)/);
   if (!match[1]) return null;
   const pdfUid = match[1];
   match = blockString(pdfUid).match(/\{{pdf:\s(.*)}}/);
@@ -343,17 +343,17 @@ function handleMainBtns(btn, pageNumber, btnBlock, iframeSrc, hlBlockUid, highli
 ////////Plant the unrooted span after the roam block separator (at the end of a block)
 function displaceBtn(btnBlock, rootId, root) {
   //Displace root 
-  var oldBtn = document.getElementById(rootId)
+  let oldBtn = document.getElementById(rootId)
   if (oldBtn) {
     oldBtn.previousSibling.remove(); //remove the sep span
     oldBtn.remove();
   }
   root.id = rootId;
   root.classList.add('span-pdf');
-  var lastEl = btnBlock.parentElement.querySelector('.rm-block-separator')
+  let lastEl = btnBlock.parentElement.querySelector('.rm-block-separator')
   insertAfter(root, lastEl)
   //Insert white space to the Left
-  var sep = document.createElement("span")
+  let sep = document.createElement("span")
   sep.classList.add('span-pdf');
   sep.style.marginLeft = "2px"
   btnBlock.parentElement.insertBefore(sep, root)
@@ -361,7 +361,7 @@ function displaceBtn(btnBlock, rootId, root) {
 
 ////////Open the PDF and send the HLs to server
 async function handleMainHighlightClick(btnBlock, iframeSrc, highlight) {
-  var iframe = getOpenIframeElementWithSrc(iframeSrc);
+  let iframe = getOpenIframeElementWithSrc(iframeSrc);
   if (!iframe) { //Iframe is closed
     iframe = openPdf(btnBlock, iframeSrc);
     await pdfSleep(3000); //Let PDF loads
@@ -392,7 +392,7 @@ function openPdf(btnBlock, iframeSrc) {
     shiftKey: true
   }));
   //Waiting for iframe to load 
-  var iframeReady = setInterval(() => {
+  let iframeReady = setInterval(() => {
     if (!getOpenIframeElementWithSrc(iframeSrc)) return;
     clearInterval(iframeReady);
   }, 500);
@@ -409,7 +409,7 @@ function handleRefBtns(pageNumber, btnBlock, iframeSrc, btnBlockUid, hlBlockUid)
 
 ////////////////////Breadcrumb Addition////////////////////
 ////////////////////Breadcrumb Placement
-var pdf2attr = {}
+let pdf2attr = {}
 function addBreadcrumb(btnBlock, pageNumber, pdfUid) {
   if (!pdf2attr[pdfUid]) pdf2attr[pdfUid] = findPDFAttribute(pdfUid, pdfParams.breadCrumbAttribute)
   btnBlock.firstChild.setAttribute("title", pdf2attr[pdfUid] + "/Pg" + pageNumber);
@@ -486,7 +486,7 @@ function createCtrlBtn(btnBlock, cssClass, newBtnId, btnText, hoverTxt) {
 
 ///////////////////PDF Alias Insertion///////////////////
 function detachPdfAlias(btnBlock, pdfAliasId) {
-  var clickable = Array.from(btnBlock.querySelectorAll(".rm-alias"))
+  let clickable = Array.from(btnBlock.querySelectorAll(".rm-alias"))
     .filter(x => { return x.innerText === '📑' })[0];
   const aliasRootSpan = clickable.parentElement.parentElement.parentElement
   displaceBtn(btnBlock, pdfAliasId, aliasRootSpan)
@@ -532,7 +532,7 @@ function replaceHl(btnRepText, btnRepAlias, btnAnnotation, btnBlockUid, hlBlockU
 
 ///////////////Jump to Annotation Button
 async function jumpToAnnotation(btnBlock, hlBlockUid, iframeSrc) {
-  var iframe = getOpenIframeElementWithSrc(iframeSrc);
+  let iframe = getOpenIframeElementWithSrc(iframeSrc);
   if (!iframe) { //Iframe is closed
     iframe = openPdf(btnBlock, iframeSrc);
     await pdfSleep(7000); //Let PDF loads
@@ -659,8 +659,8 @@ function handleDeletedHighlight(event) {
 function getUncleBlock(pdfBlockUid) {
   const pdfParentBlockUid = parentBlockUid(pdfBlockUid);
   const gParentBlockUid = parentBlockUid(pdfParentBlockUid);
-  var dictUid2Ord = {};
-  var dictOrd2Uid = {};
+  let dictUid2Ord = {};
+  let dictOrd2Uid = {};
   if (!gParentBlockUid) return null;
   const mainBlocksUid = allChildrenInfo(gParentBlockUid);
   mainBlocksUid[0][0].children.map(child => {
@@ -668,7 +668,7 @@ function getUncleBlock(pdfBlockUid) {
     dictOrd2Uid[child.order] = child.uid;
   });
   //Single assumption: PDF & Highlights are assumed to be siblings.
-  var hlParentBlockUid = dictOrd2Uid[dictUid2Ord[pdfParentBlockUid] + 1];
+  let hlParentBlockUid = dictOrd2Uid[dictUid2Ord[pdfParentBlockUid] + 1];
   if (!hlParentBlockUid) {
     hlParentBlockUid = createUid()
     createChildBlock(gParentBlockUid, dictUid2Ord[pdfParentBlockUid] + 1,
@@ -678,8 +678,8 @@ function getUncleBlock(pdfBlockUid) {
 }
 
 ////////////Write the Highlight Text Using the Given Format
-var pdf2citeKey = {}
-var pdf2pgOffset = {}
+let pdf2citeKey = {}
+let pdf2pgOffset = {}
 async function writeHighlightText(pdfBlockUid, hlTextUid, hlBtn, hlContent, pdfAlias, page) {
   let hlParentBlockUid;
   //Find where to write
@@ -692,7 +692,7 @@ async function writeHighlightText(pdfBlockUid, hlTextUid, hlBtn, hlContent, pdfA
   }
   //Make the citation
   const perfix = (pdfParams.blockQPerfix === '') ? '' : pdfParams.blockQPerfix + ' ';
-  var Citekey = '';
+  let Citekey = '';
   if (pdfParams.citationFormat !== '') {
     if (!pdf2citeKey[pdfBlockUid]) {
       pdf2citeKey[pdfBlockUid] = findPDFAttribute(pdfBlockUid, "Citekey")
@@ -739,8 +739,8 @@ function saveHighlightData(pdfUid, pdfUrl, hlDataUid, hlTextUid, hlInfo, hlConte
 /*******************************************************/
 /**********Render PDF and Highlights BEGIN**************/
 /////////////////////Find pdf iframe being highlighted
-var allPdfIframes = []; //History of opened pdf on page
-var activePdfIframeId = null; //Last active pdf iframe.id
+let allPdfIframes = []; //History of opened pdf on page
+let activePdfIframeId = null; //Last active pdf iframe.id
 
 window.addEventListener('blur', function () {
   activePdfIframe = allPdfIframes.find(x => x === document.activeElement);
@@ -771,7 +771,7 @@ function getAllHighlights(pdfUrl, pdfUid) {
 
 function getDataTableUid(pdfUrl, pdfUid) {
   const pdfDataPageTitle = getDataPageTitle(pdfUrl);
-  var pdfDataPageUid = getPageUid(pdfDataPageTitle);
+  let pdfDataPageUid = getPageUid(pdfDataPageTitle);
   if (!pdfDataPageUid) //If this is the first time uploading the pdf
     pdfDataPageUid = createDataPage(pdfDataPageTitle, pdfUrl, pdfUid);
   return getNthChildUid(pdfDataPageUid, 2);
@@ -872,7 +872,7 @@ function getNthChildUid(parentUid, order) {
 pdfSleep = m => new Promise(r => setTimeout(r, m))
 
 function createPage(pageTitle) {
-  var pageUid = createUid()
+  let pageUid = createUid()
   const status = window.roamAlphaAPI.createPage(
     {
       "page":
@@ -888,7 +888,7 @@ function updateBlockString(blockUid, newString) {
 }
 
 function hashCode(str) {
-  var hash = 0, i, chr;
+  let hash = 0, i, chr;
   for (i = 0; i < str.length; i++) {
     chr = str.charCodeAt(i);
     hash = ((hash << 5) - hash) + chr;

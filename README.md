@@ -31,7 +31,7 @@ To install, do the same thing you do for any roam/js script.
      //Rerference to Highlight 
      ///Block References Related
      copyBlockRef: true,//false: copy captured text
-     sortBtnText: 'sort them all!',//{{sort them all!}} button will sorted highlight references.
+     sortBtnText: 'sort them all!',//{{sort them all!}} btn will sort highlight refs.
      ///Block Reference Buttons  
      aliasChar: '✳', //use '' to disable
      textChar: 'T', //use '' to disable	
