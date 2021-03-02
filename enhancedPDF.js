@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Enhanced-PDF Extension for Roam Research
-// @author       Ryan Muller @cicatriz and Connected Cognition Crumbs <c3founder@gmail.com>
+// @author       hungriesthippo <https://github.com/hungriesthippo> & CCC <https://github.com/c3founder>
 // @require 	 -
-// @version      0.8
+// @version      0.9
 // @match        https://*.roamresearch.com
 // @description  Handle PDF Highlights.  
 //		 MAIN OUTPUT MODES: 
@@ -95,9 +95,23 @@ function handleHighlightDelete(node) {
       const match = btn.id.match(/main-hlBtn-(.........)/)
       if (match) {
         if (existBlockUid(match[1])) {//If the data page was deleted ignore 
-          await pdfSleep(5000) //Maybe someone is moving blocks or undo                  
-          if (!existBlockUid(blockString(match[1])))
-            window.roamAlphaAPI.deleteBlock({ "block": { "uid": match[1] } })
+          await pdfSleep(3000) //Maybe someone is moving blocks or undo                  
+          if (!existBlockUid(blockString(match[1]))) {
+            //Delete the date row                
+            const hlDataRowUid = match[1];
+            const hlDataRow = queryAllTxtInChildren(hlDataRowUid);
+            const toDeleteHighlight = getHighlight(hlDataRow[0][0]);
+            const dataTableUid = parentBlockUid(hlDataRowUid);
+            window.roamAlphaAPI.deleteBlock({ "block": { "uid": hlDataRowUid } });
+            //Delete the hl on pdf (send message to render)            
+            const dataPageUid = parentBlockUid(dataTableUid);
+            const pdfUrl = encodePdfUrl(blockString(getNthChildUid(dataPageUid, 0)));
+            Array.from(document.getElementsByTagName('iframe'))
+              .filter(x => x.src === pdfUrl)
+              .forEach(iframe => {
+                iframe.contentWindow.postMessage({ deleted: toDeleteHighlight }, '*');
+              });
+          }
         }
       }
     });
@@ -175,7 +189,7 @@ function activateSortButtons() {
     .filter(isInactiveSortBtn)
     .forEach(btn => {
       const sortBtnBlockUid = getUidOfContainingBlock(btn);
-      btn.classList.add('btn-sort-highlight');
+      btn.classList.add('btn-sort-highlight', 'btn-pdf-activated');
       const pdfUid = parentBlockUid(sortBtnBlockUid)
       const match = blockString(pdfUid).match(/\{{pdf:\s(.*)}}/);
       if (match[1]) {
@@ -196,7 +210,7 @@ function activateSortButtons() {
         });
         var cnt = 0
         btn.onclick = () =>
-          highlights.map(function (item) { createChildBlock(sortBtnBlockUid, cnt++, "((" + item.blockRef + "))", createUid()); })
+          highlights.map(function (item) { createChildBlock(sortBtnBlockUid, cnt++, "((" + item.id + "))", createUid()); })
 
       }
     })
@@ -296,11 +310,22 @@ function getTextFromNestedNodes(node, texts) {
     node.children.forEach(child => getTextFromNestedNodes(child, texts))
 }
 
-function getHighlight(hl) { //the column order is: (hlUid, hlPos, hlTxt)
-  const position = JSON.parse(hl.children[0].string);
+function getHighlight(hl) { //the column order is: (hlUid, hlInfo(pos, color), hlTxt)  
+  //Extracting Text
   const hlText = hl.children[0].children[0].string;
+  //Extracting Info = (position, color)
+  const hlInfo = JSON.parse(hl.children[0].string);
+  let position, color;
+  if (typeof (hlInfo.position) === 'undefined') {//if older version highlight
+    position = JSON.parse(hl.children[0].string);
+    color = 0;
+  } else {
+    position = hlInfo.position;
+    color = hlInfo.color;
+  }
+  //Extracting Id
   const id = hl.string
-  return { id, content: { text: hlText }, position };
+  return { id, content: { text: hlText }, position, color };
 }
 
 ////////////////////////////////////////////////////////////
@@ -394,10 +419,12 @@ function addBreadcrumb(btnBlock, pageNumber, pdfUid) {
 ////////////////////shared parents for the meta info
 function findPDFAttribute(pdfUid, attribute) {
   let gParentRef;
-  if (pdfParams.outputHighlighAt === 'cousin')
+  if (pdfParams.outputHighlighAt === 'cousin'){
     gParentRef = parentBlockUid(parentBlockUid(pdfUid));
+    if (!gParentRef) gParentRef = pdfUid;
+  }    
   else //child mode
-    gParentRef = parentBlockUid(pdfUid);
+    gParentRef = pdfUid; //parentBlockUid(pdfUid);
 
   let ancestorrule = `[ 
                    [ (ancestor ?b ?a) 
@@ -481,9 +508,9 @@ function replaceHl(btnRepText, btnRepAlias, btnAnnotation, btnBlockUid, hlBlockU
   const hlText = hl.substring(0, match.index);
   const hlAlias = hlText + "[*](((" + hlBlockUid + ")))";
   if (asText)
-    window.roamAlphaAPI.updateBlock({ "block": { "uid": btnBlockUid, "string": hlText } });
+    updateBlockString(btnBlockUid, hlText)
   else
-    window.roamAlphaAPI.updateBlock({ "block": { "uid": btnBlockUid, "string": hlAlias } });
+    updateBlockString(btnBlockUid, hlAlias)
 
   const pdfAlias = document.getElementById(pdfAliasId)
   pdfAlias.previousSibling.remove();
@@ -518,39 +545,114 @@ async function jumpToAnnotation(btnBlock, hlBlockUid, iframeSrc) {
 
 /*******************************************************/
 /************Handle New HL Received BEGIN***************/
-window.addEventListener('message', handleRecievedHighlight, false);
+window.addEventListener('message', handleRecievedMessage, false);
 
 ///////////Recieve Highlight Data, Output Highlight Text, Store HL Data 
-function handleRecievedHighlight(event) {
-  if (event.data.deleted) {
-    const toDeleteHlTextUid = event.data.deleted.id;
-    const toDeleteHlDataRowUid = getHighlightDataAddress(toDeleteHlTextUid)
-    window.roamAlphaAPI.deleteBlock({ "block": { "uid": toDeleteHlTextUid } })
-    window.roamAlphaAPI.deleteBlock({ "block": { "uid": toDeleteHlDataRowUid } })
-    return;
+function handleRecievedMessage(event) {
+  switch (event.data.actionType) {
+    case 'added':
+      handleNewHighlight(event)
+      break;
+    case 'updated':
+      handleUpdatedHighlight(event)
+      break;
+    case 'deleted':
+      handleDeletedHighlight(event)
+      break;
   }
-  if (event.data.highlight) {
-    if (event.data.highlight.position.rects.length == 0) {
-      event.data.highlight.position.rects[0] = event.data.highlight.position.boundingRect;
-    }
-    const page = event.data.highlight.position.pageNumber;
-    const hlPosition = JSON.stringify(event.data.highlight.position);
-    const iframe = document.getElementById(activePdfIframeId);
-    const pdfBlockUid = getUidOfContainingBlock(iframe);
-    let hlContent;
-    const pdfAlias = `[${pdfChar}](((${pdfBlockUid})))`;
-    const hlDataUid = createUid();
-    const hlTextUid = event.data.highlight.id;
-    const hlBtn = `{{${page}: ${hlDataUid}}}`;
+}
 
-    if (event.data.highlight.imageUrl) {
-      hlContent = `![](${event.data.highlight.imageUrl})`;
-    } else {
-      hlContent = `${event.data.highlight.content.text}`;
-    }
-    writeHighlightText(pdfBlockUid, hlTextUid, hlBtn, hlContent, pdfAlias, page);
-    saveHighlightData(pdfBlockUid, decodePdfUrl(iframe.src), hlDataUid, hlTextUid, hlPosition, hlContent);
+function handleUpdatedHighlight(event) {
+  const newColorNum = parseInt(event.data.highlight.color);
+  if (pdfParams.addColoredHighlight && newColorNum) {
+    const hlId = event.data.highlight.id;
+    updateHighlightText(newColorNum, hlId);
+    updateHighlightData(newColorNum, hlId);
   }
+}
+
+function updateHighlightText(newColorNum, hlId) {
+  let newColorString = '';
+  switch (newColorNum) {
+    case 1: newColorString = "yellow"; break;
+    case 2: newColorString = "red"; break;
+    case 3: newColorString = "green"; break;
+    case 4: newColorString = "blue"; break;
+    case 5: newColorString = "purple"; break;
+  }
+  if (newColorString !== '') {
+    let hlText = blockString(hlId);
+    //Separate Perfix and Main Text
+    const hasPerfix1 = hlText.match(/>(.*)/);
+    const hasPerfix2 = hlText.match(/\[\[>\]\](.*)/);
+    let perfix, restTxt;
+    if (hasPerfix1) {
+      perfix = '>';
+      restTxt = hasPerfix1[1];
+    } else if (hasPerfix2) {
+      perfix = '[[>]]';
+      restTxt = hasPerfix2[1];
+    } else {
+      perfix = '';
+      restTxt = hlText;
+    }
+    const content = restTxt.match(/(.*)({{\d+:\s*.........}}\s*\[📑\]\(\(\(.........\)\)\))/);
+    const isImage = restTxt.match(/.*(\!\[.*\]\(.*\))\s*{{\d+:\s*.........}}\s*\[📑\]\(\(\(.........\)\)\)/)
+    const isHlTxt = restTxt.match(/.*(\^{2}.*\^{2}).*/)
+    if (isImage)
+      mainContent = ` ${isImage[1]}`;
+    else if (isHlTxt)
+      mainContent = isHlTxt[1];
+    else
+      mainContent = `^^${content[1]}^^`;
+    const trail = content[2]
+    updateBlockString(hlId, `${perfix} #h:${newColorString}${mainContent} ${trail}`);
+  }
+}
+
+function updateHighlightData(newColorNum, toUpdateHlTextUid) {
+  const toUpdateHlDataRowUid = getHighlightDataAddress(toUpdateHlTextUid)
+  const toUpdateHlInfoUid = getNthChildUid(toUpdateHlDataRowUid, 0);
+  const toUpdateHlInfoString = blockString(toUpdateHlInfoUid);
+  let toUpdateHlInfo = JSON.parse(toUpdateHlInfoString)
+  let hlPosition;
+  if (typeof (toUpdateHlInfo.position) === 'undefined') //if older version highlight
+    hlPosition = toUpdateHlInfo;
+  else
+    hlPosition = toUpdateHlInfo.position;
+  updateBlockString(toUpdateHlInfoUid, JSON.stringify({ position: hlPosition, color: newColorNum }));
+}
+
+function handleNewHighlight(event) {
+  if (event.data.highlight.position.rects.length == 0) {
+    event.data.highlight.position.rects[0] = event.data.highlight.position.boundingRect;
+  }
+  const page = event.data.highlight.position.pageNumber;
+  const hlInfo = JSON.stringify({
+    position: event.data.highlight.position, color: event.data.highlight.color
+  });
+  const iframe = document.getElementById(activePdfIframeId);
+  const pdfBlockUid = getUidOfContainingBlock(iframe);
+  let hlContent;
+  const pdfAlias = `[${pdfChar}](((${pdfBlockUid})))`;
+  const hlDataUid = createUid();
+  const hlTextUid = event.data.highlight.id;
+  const hlBtn = `{{${page}: ${hlDataUid}}}`;
+
+  if (event.data.highlight.imageUrl) {
+    hlContent = `![](${event.data.highlight.imageUrl})`;
+  } else {
+    hlContent = `${event.data.highlight.content.text}`;
+  }
+  writeHighlightText(pdfBlockUid, hlTextUid, hlBtn, hlContent, pdfAlias, page);
+  saveHighlightData(pdfBlockUid, decodePdfUrl(iframe.src), hlDataUid, hlTextUid, hlInfo, hlContent);
+}
+
+function handleDeletedHighlight(event) {
+  const toDeleteHlTextUid = event.data.highlight.id;
+  const toDeleteHlDataRowUid = getHighlightDataAddress(toDeleteHlTextUid)
+  window.roamAlphaAPI.deleteBlock({ "block": { "uid": toDeleteHlTextUid } })
+  window.roamAlphaAPI.deleteBlock({ "block": { "uid": toDeleteHlDataRowUid } })
 }
 
 ///////////For the Cousin Output Mode: Find the Uncle of the PDF Block. 
@@ -569,7 +671,8 @@ function getUncleBlock(pdfBlockUid) {
   var hlParentBlockUid = dictOrd2Uid[dictUid2Ord[pdfParentBlockUid] + 1];
   if (!hlParentBlockUid) {
     hlParentBlockUid = createUid()
-    createChildBlock(gParentBlockUid, dictUid2Ord[pdfParentBlockUid] + 1, "**Highlights**", hlParentBlockUid);
+    createChildBlock(gParentBlockUid, dictUid2Ord[pdfParentBlockUid] + 1,
+      pdfParams.highlightHeading, hlParentBlockUid);
   }
   return hlParentBlockUid;
 }
@@ -577,11 +680,12 @@ function getUncleBlock(pdfBlockUid) {
 ////////////Write the Highlight Text Using the Given Format
 var pdf2citeKey = {}
 var pdf2pgOffset = {}
-function writeHighlightText(pdfBlockUid, hlTextUid, hlBtn, hlContent, pdfAlias, page) {
+async function writeHighlightText(pdfBlockUid, hlTextUid, hlBtn, hlContent, pdfAlias, page) {
   let hlParentBlockUid;
   //Find where to write
   if (pdfParams.outputHighlighAt === 'cousin') {
-    hlParentBlockUid = getUncleBlock(pdfBlockUid);
+    hlParentBlockUid = getUncleBlock(pdfBlockUid);    
+    await pdfSleep(100);
     if (!hlParentBlockUid) hlParentBlockUid = pdfBlockUid; //there is no gparent, write hl as a child
   } else { //outputHighlighAt ==='child'
     hlParentBlockUid = pdfBlockUid
@@ -621,11 +725,11 @@ function writeHighlightText(pdfBlockUid, hlTextUid, hlBtn, hlContent, pdfAlias, 
 }
 
 ///////////Save Annotations in the PDF Data Page in a Table
-function saveHighlightData(pdfUid, pdfUrl, hlDataUid, hlTextUid, hlPosition, hlContent) {
+function saveHighlightData(pdfUid, pdfUrl, hlDataUid, hlTextUid, hlInfo, hlContent) {
   const dataTableUid = getDataTableUid(pdfUrl, pdfUid);
   createChildBlock(dataTableUid, 0, hlTextUid, hlDataUid);
   const posUid = createUid();
-  createChildBlock(hlDataUid, 0, hlPosition, posUid);
+  createChildBlock(hlDataUid, 0, hlInfo, posUid);
   createChildBlock(posUid, 0, hlContent, createUid());
 }
 
@@ -777,7 +881,11 @@ function createPage(pageTitle) {
   return status ? pageUid : null
 }
 
-
+function updateBlockString(blockUid, newString) {
+  return window.roamAlphaAPI.updateBlock({
+    block: { uid: blockUid, string: newString }
+  });
+}
 
 function hashCode(str) {
   var hash = 0, i, chr;
