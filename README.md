@@ -19,41 +19,41 @@ To install, do the same thing you do for any roam/js script.
 1. Paste the following into the new Code Block
 
 ``` javascript
-   window.pdfParams = {
-	 //Highlight 
-     ///Placement
-     outputHighlighAt: 'cousin', //cousin, child
-     highlightHeading: '**Highlights**', //for cousin mode only 
-     appendHighlight: true, //append: true, prepend: false
-     ///Rest of Highlight Options
-     breadCrumbAttribute: 'Title', //Title, Author, Citekey, etc. 
-     addColoredHighlight: true,//bring the color of highlights into your graph
-     //Rerference to Highlight 
-     ///Block References Related
-     copyBlockRef: true,//false: copy captured text
-     sortBtnText: 'sort them all!',//{ { sort them all! } } btn will sort highlight refs.
-     ///Block Reference Buttons  
-     aliasChar: '✳', //use '' to disable
-     textChar: 'T', //use '' to disable	
-     //PDF Viewer
-     pdfStaticHeight: 900,
-     pdfStaticWidth: 1200,
-     pdfMinWidth: 450,
-     pdfMinHeight: 900,
-     //Citation 
-     ///Format   
-     ////use Citekey and page in any formating string 
-     ////page can be offset by `Page Offset` attribute. 
-     ////common usecase: 
-     /////Zotero imports with 'roam page title' = @Citekey and Citekey attribute
-     ////examples:
-     /////"[${Citekey}]([[@${Citekey}]])" 
-     /////"[(${Citekey}, ${page})]([[@${Citekey}]])" 
-     /////use '' to disable  
-     citationFormat: '',
-     ///BlockQuote 
-     blockQPerfix: ''//use '' to disable. Alternatives are: > or [[>]].
-   };
+	window.pdfParams = {
+		//Highlight 
+		///Placement
+		outputHighlighAt: 'cousin', //cousin, child
+		highlightHeading: '**Highlights**', //for cousin mode only 
+		appendHighlight: true, //append: true, prepend: false
+		///Rest of Highlight Options
+		breadCrumbAttribute: 'Title', //Title, Author, Citekey, etc. 
+		addColoredHighlight: true,//bring the color of highlights into your graph
+		//Rerference to Highlight 
+		///Block References Related
+		copyBlockRef: true,//false: copy captured text
+		sortBtnText: 'sort them all!',//{ { sort them all! } } btn will sort highlight refs.
+		///Block Reference Buttons  
+		aliasChar: '✳', //use '' to disable
+		textChar: 'T', //use '' to disable	
+		//PDF Viewer
+		pdfStaticHeight: 900,
+		pdfStaticWidth: 1200,
+		pdfMinWidth: 450,
+		pdfMinHeight: 900,
+		//Citation 
+		///Format   
+		////use Citekey and page in any formating string 
+		////page can be offset by `Page Offset` attribute. 
+		////common usecase: 
+		/////Zotero imports with 'roam page title' = @Citekey and Citekey attribute
+		////examples:
+		/////"[${Citekey}]([[@${Citekey}]])" 
+		/////"[(${Citekey}, ${page})]([[@${Citekey}]])" 
+		/////use '' to disable  
+		citationFormat: '',
+		///BlockQuote 
+		blockQPerfix: ''//use '' to disable. Alternatives are: > or [[>]].
+	};
 	var s = document.createElement("script");
 	s.type = "text/javascript";
 	s.src = "https://c3founder.github.io/Roam-Enhancement/enhancedPDF.js";
