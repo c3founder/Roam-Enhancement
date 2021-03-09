@@ -81,7 +81,7 @@ document.getElementsByTagName("head")[0].appendChild(s);
 
 ### CSS 
 
-To install the CSS put this line in a CSS code block on you [[roam/css]] page: 
+To install the CSS put this line in a CSS code block on your [[roam/css]] page: 
 
 ```css
 @import url('https://c3founder.github.io/Roam-Enhancement/enhancedPDF.css');
@@ -151,7 +151,7 @@ To install, do the same thing you do for any roam/js script.
 
 ### CSS
 
-To install the CSS put this line in a CSS code block on you [[roam/css]] page: 
+To install the CSS put this line in a CSS code block on your [[roam/css]] page: 
 
 ~~~css
 @import url('https://c3founder.github.io/Roam-Enhancement/enhancedYouTube.css');
