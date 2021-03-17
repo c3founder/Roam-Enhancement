@@ -438,12 +438,12 @@ function findPDFAttribute(pdfUid, attribute) {
       :in $ %
       :where
           [?block :block/string ?attr]
-          [(clojure.string/starts-with? ?attr \"${attribute}\")]
+          [(clojure.string/starts-with? ?attr \"${attribute}:\")]
           (ancestor ?block ?gblock)
              [?gblock :block/uid \"${gParentRef}\"]]`, ancestorrule)
   if (!res.length) return '';
   // match attribute: or attribute::
-  const attrMatch = new RegExp(`^${attribute}::?\\s+(.*)$`);
+  const attrMatch = new RegExp(`^${attribute}::?\\s*(.*)$`);
   return res[0][0].string.match(attrMatch)[1];
 }
 
