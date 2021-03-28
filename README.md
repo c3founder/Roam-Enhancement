@@ -91,20 +91,22 @@ For example for 'Markazi Text', import the following: */
   --rtl-bullet-margin-top: 5px;
   --rtl-control-margin-top: 4px;
   --rtl-generic-font: san-serif;
-  --rtl-font: 'Noto Naskh Arabic'; /*'Markazi Text'*/
+  --rtl-font: 'Noto Naskh Arabic'; /*'Markazi Text'*/ /*Make sure you select the generic font first*/
   --rtl-font-size: 1em;
   --rtl-textarea-background-color: rgba(253,253,168,0.53);
   --rtl-textarea-font-size: 1em;
+  --rtl-textarea-line-height: 1.75em;
   /*****LTR Variables*****/ 
   --ltr-margin-right: 31px; 
   --ltr-margin-left: 31px; 
   --ltr-bullet-margin-top: unset;
   --ltr-control-margin-top: unset;
   --ltr-generic-font: unset; /*san-serif;*/
-  --ltr-font: unset; /*'Lato';*/
+  --ltr-font: unset; /*'Lato';*/ /*Make sure you select the generic font first*/
   --ltr-font-size: unset; /*1em;*/
   --ltr-textarea-background-color: rgba(253,253,168,0.53); /*unset;*/
   --ltr-textarea-font-size: unset; /*1em;*/
+  --ltr-textarea-line-height: unset; /*1.5em*/
 }
 
 ```
