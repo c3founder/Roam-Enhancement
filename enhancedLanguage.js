@@ -16,9 +16,11 @@ function changeDir(txtEl, forceCheck = false) {
         container = header ? txtEl.closest('h1') : container
         let starPage = (container === null) 
         container = starPage ? txtEl.closest('a') : container
-        if (!container.dataset.direction || forceCheck) { //forceCheck to response to dynamic change in textareas
+        if ((!container.dataset.direction || container.dataset.wasTxt) || forceCheck) { //forceCheck to response to dynamic change in textareas
             let newContent = content.replace(/[0-9\x20-\x2f\x3a-\x40\x5b-\x60\x7b-\x7e]*/gi, '');
             let rtl = isRTL(newContent[0])
+            if(forceCheck) container.dataset.wasTxt = 'true';
+            else if(container.dataset.wasTxt) delete container.dataset.wasTxt
             if (rtl) container.dataset.direction = 'rtl';
             else container.dataset.direction = 'ltr';            
             if (!header && !starPage) { 

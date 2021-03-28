@@ -87,7 +87,7 @@ For example for 'Markazi Text', import the following: */
   --rm-block-sep-min-width: 0px;
   /*****RTL Variables*****/ 
   --rtl-margin-right: 31px;
-  --rtl-margin-left: 31px;
+  --rtl-margin-left: 31px; 
   --rtl-bullet-margin-top: 5px;
   --rtl-control-margin-top: 4px;
   --rtl-generic-font: san-serif;
