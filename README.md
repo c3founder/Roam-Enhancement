@@ -1,19 +1,8 @@
-# PDF Highlighter for Roam Research 
-Thanks to the following roamcult members who supported the development of this extension (no specific order): 
-- [Abhay Prasanna](https://twitter.com/AbhayPrasanna)
-- [Owen Cyrulnik](https://twitter.com/cyrulnik)
-- [Stian Håklev](https://twitter.com/houshuang)
-- [Ryan Muller](https://twitter.com/cicatriz)
-- [Mridula Duggal](https://twitter.com/Mridgyy)
-- [Joel Chan](https://twitter.com/JoelChan86)
-- [Lester](https://twitter.com/lesroco)
-- [Ekim Nazım Kaya](https://twitter.com/ekimnazimkaya)
-- [Tomas Baranek](https://twitter.com/tombarys)
-- [Conor](https://twitter.com/Conaw)
+# Introduction 
 
+This repository contains a set of JavaScript plugin/extensions (and their related CSS) for Roam Research. I call them enhancements because they improve my daily interaction with Roam. I will gradually add more extensions that I develop for my needs here and update the old ones. 
 
-
-## Installation 
+Here is the general installation guideline for all of the JavaScript and CSS codes. 
 
 ### JavaScript
 
@@ -27,9 +16,116 @@ To install, do the same thing you do for any roam/js script.
 
 1. Nest under that block a Code Block
 
-1. Make sure the code language is set as JavaScript
+1. Make sure the code language is set as **JavaScript**
 
-1. Paste the following into the new Code Block
+1. Paste the JavaScript code into the new Code Block. Usually it looks something like this:
+
+   ``` javascript
+   window.parameters = {
+   	//Parameters that you can customize 
+   };
+   var s = document.createElement("script");
+   s.type = "text/javascript";
+   s.src = "https://c3founder.github.io/Roam-Enhancement/enhancedX.js";
+   document.getElementsByTagName("head")[0].appendChild(s);
+   ```
+
+1. A warning box shows up asking you to review the risks of using roam/js.
+
+1. Once you have reviewed the warning and understand/accept the risk, click Yes.
+
+1. Refresh Roam and the script should now be installed!
+
+### CSS 
+
+To install the CSS put this line in a CSS code block on you [[roam/css]] page. Make sure the code language is set as **CSS**
+
+```css
+@import url('https://c3founder.github.io/Roam-Enhancement/enhancedX.css');
+```
+
+### Demo
+
+I usually make YouTube demo video(s)  for each extension to explain functionalities and known issues. The main purpose of videos is to prevent confusion and ultimately reduce the number of questions I receive. So please watch them before sending in your questions!
+
+### Reporting Issues and Feature Request
+
+You can report bugs and suggest new features through GitHub:
+
+https://github.com/c3founder/Roam-Enhancement/issues
+
+Each extension has its own label that you can use when reporting issues. 
+
+I'll post community wetted solutions to issues here over time. 
+
+# Enhancements
+
+## Mixed Text Direction
+
+This extension detects right-to-left and left-to-right characters at the beginning of each block and changes the block direction. You can infinitely nest rtl and ltr blocks with no issue. You can also have different font for each of rtl and ltr languages. 
+
+#### JavaScript
+
+```javascript
+var s = document.createElement("script");
+s.type = "text/javascript";
+s.src = "https://c3founder.github.io/Roam-Enhancement/enhancedLanguage.js";
+document.getElementsByTagName("head")[0].appendChild(s);
+```
+
+#### CSS 
+
+```css
+@import url('https://c3founder.github.io/Roam-Enhancement/enhancedLanguage.css');
+/* More fonts here: https://fonts.google.com/?subset=arabic 
+For example for 'Markazi Text', import the following: */
+@import url('https://fonts.googleapis.com/css?family=Markazi+Text'); 
+@import url(//fonts.googleapis.com/earlyaccess/notonaskharabic.css);
+@import url(//fonts.googleapis.com/earlyaccess/notonaskharabicui.css);
+
+:root {  
+  --rm-block-sep-min-width: 0px;
+  /*****RTL Variables*****/ 
+  --rtl-margin-right: 31px;
+  --rtl-margin-left: 31px;
+  --rtl-bullet-margin-top: 5px;
+  --rtl-control-margin-top: 4px;
+  --rtl-generic-font: san-serif;
+  --rtl-font: 'Noto Naskh Arabic'; /*'Markazi Text'*/
+  --rtl-font-size: 1em;
+  --rtl-textarea-background-color: rgba(253,253,168,0.53);
+  --rtl-textarea-font-size: 1em;
+  /*****LTR Variables*****/ 
+  --ltr-margin-right: 31px; 
+  --ltr-margin-left: 31px; 
+  --ltr-bullet-margin-top: unset;
+  --ltr-control-margin-top: unset;
+  --ltr-generic-font: unset; /*san-serif;*/
+  --ltr-font: unset; /*'Lato';*/
+  --ltr-font-size: unset; /*1em;*/
+  --ltr-textarea-background-color: rgba(253,253,168,0.53); /*unset;*/
+  --ltr-textarea-font-size: unset; /*1em;*/
+}
+
+```
+
+
+
+## PDF Highlighter 
+
+Thanks to the following roamcult members who supported the development of this extension (no specific order): 
+- [Abhay Prasanna](https://twitter.com/AbhayPrasanna)
+- [Owen Cyrulnik](https://twitter.com/cyrulnik)
+- [Stian Håklev](https://twitter.com/houshuang)
+- [Ryan Muller](https://twitter.com/cicatriz)
+- [Mridula Duggal](https://twitter.com/Mridgyy)
+- [Joel Chan](https://twitter.com/JoelChan86)
+- [Lester](https://twitter.com/lesroco)
+- [Ekim Nazım Kaya](https://twitter.com/ekimnazimkaya)
+- [Tomas Baranek](https://twitter.com/tombarys)
+- [Conor](https://twitter.com/Conaw)
+
+#### JavaScript
 
 ``` javascript
 window.pdfParams = {
@@ -73,93 +169,64 @@ s.src = "https://c3founder.github.io/Roam-Enhancement/enhancedPDF.js";
 document.getElementsByTagName("head")[0].appendChild(s);
 ```
 
-1. A warning box shows up asking you to review the risks of using roam/js.
-
-1. Once you have reviewed the warning and understand/accept the risk, click Yes.
-
-1. Refresh Roam and the script should now be installed!
-
-### CSS 
-
-To install the CSS put this line in a CSS code block on you [[roam/css]] page: 
+#### CSS 
 
 ```css
 @import url('https://c3founder.github.io/Roam-Enhancement/enhancedPDF.css');
 ```
 
-## Functionalities   
+#### Functionalities
 Full tutorial here: 
 - [![pdfhighlighter](https://img.youtube.com/vi/-yVqQqUEHKI/0.jpg)](https://www.youtube.com/watch?v=-yVqQqUEHKI&ab_channel=CCC)
 
-# Enhanced YouTube Player for Roam Research
+## Enhanced YouTube Player 
 
-## Installation 
-### JavaScript
+#### JavaScript
 
 To install, do the same thing you do for any roam/js script.
 
-1. Create page in Roam (if not already present) called [[roam/js]]
+```javascript
+window.ytParams = {
+  //Player
+  ////Player Style
+  border : '0px',
+  borderStyle : 'inset',
+  borderRadius : '25px',
+  ////Player Size
+  vidHeight : 480,
+  vidWidth : 720,
+  //Shortcuts
+  grabTitleKey : 'alt+a t',
+  grabTimeKey : 'alt+a n',  
+  ////Speed Controls
+  normalSpeedKey : 'alt+a 0',
+  speedUpKey: 'alt+a =',
+  speedDownKey: 'alt+a -',
+  ////Volume Controls
+  muteKey: 'alt+a m',
+  volUpKey: 'alt+a i',
+  volDownKey: 'alt+a k',
+  ////Playback Controls
+  playPauseKey : 'alt+a p', 
+  backwardKey: 'alt+a j',
+  forwardKey: 'alt+a l'
+}; 
 
-1. If you previously installed this script by copying from a GitHub Gist, remove it from [[roam/js]] now.
+var s = document.createElement("script");
+s.type = "text/javascript";
+s.src = "https://c3founder.github.io/Roam-Enhancement/enhancedYouTube.js";
+document.getElementsByTagName("head")[0].appendChild(s);
+```
 
-1. Create a new block on this page and enter: ```
-
-1. Nest under that block a Code Block
-
-1. Make sure the code language is set as JavaScript
-
-1. Paste the following into the new Code Block
-
-	```javascript
-	window.ytParams = {
-	  //Player
-	  ////Player Style
-	  border : '0px',
-	  borderStyle : 'inset',
-	  borderRadius : '25px',
-	  ////Player Size
-	  vidHeight : 480,
-	  vidWidth : 720,
-	  //Shortcuts
-	  grabTitleKey : 'alt+a t',
-	  grabTimeKey : 'alt+a n',  
-	  ////Speed Controls
-	  normalSpeedKey : 'alt+a 0',
-	  speedUpKey: 'alt+a =',
-	  speedDownKey: 'alt+a -',
-	  ////Volume Controls
-	  muteKey: 'alt+a m',
-	  volUpKey: 'alt+a i',
-	  volDownKey: 'alt+a k',
-	  ////Playback Controls
-	  playPauseKey : 'alt+a p', 
-	  backwardKey: 'alt+a j',
-	  forwardKey: 'alt+a l'
-	}; 
-
-	var s = document.createElement("script");
-	s.type = "text/javascript";
-	s.src = "https://c3founder.github.io/Roam-Enhancement/enhancedYouTube.js";
-	document.getElementsByTagName("head")[0].appendChild(s);
-   ```
-
-1. A warning box shows up asking you to review the risks of using roam/js.
-
-1. Once you have reviewed the warning and understand/accept the risk, click Yes.
-
-1. Refresh Roam and the script should now be installed!
-
-### CSS
-
-To install the CSS put this line in a CSS code block on you [[roam/css]] page: 
+#### CSS
 
 ~~~css
 @import url('https://c3founder.github.io/Roam-Enhancement/enhancedYouTube.css');
 ~~~
 
-## Functionalities  
+#### Functionalities
 
-### Responsive/Resizable Player 
+##### Responsive/Resizable Player 
 You can set the original iframe size here in the code plus the border style. 
 
 - **Parameters:** Border style of the video and its height and width when the right sidebar is closed. 
@@ -168,21 +235,21 @@ You can set the original iframe size here in the code plus the border style.
 	- borderRadius : curvature of corners
 	- vidHeight : height 
 	- vidWidth : width 
-- **Demo**
+- **YouTube Demo**
 	- [![responsive player](https://img.youtube.com/vi/vJ3gPX89fz0/0.jpg)](https://www.youtube.com/watch?v=vJ3gPX89fz0&ab_channel=ConnectedCognitionCrumbs)
 
 
-### YouTube Timestamp 
+##### YouTube Timestamp 
 You can add timestamps to videos using a shortcut. 
 
 - **Parameters:**
   - grabTitleKey: if in a DIRECT child block of the YT video, grabs the title and paste it to the beginning of the current block.
   - grabTimeKey: if in ANY child blocks of the YT video, it captures the player's current time and pastes it to the beginning of the block.
-- **Demo**
+- **YouTube Demo**
 	- [![timestamp](https://img.youtube.com/vi/Kgo_Lkw-2CA/0.jpg)](https://www.youtube.com/watch?v=Kgo_Lkw-2CA&ab_channel=ConnectedCognitionCrumbs)
 
 
-### In-text Controllable Player
+##### In-text Controllable Player
 You can control the YT player while you are typing. 
 
 - If you have one player on the page, shortcuts will control the player, easy. 
@@ -201,10 +268,9 @@ You can control the YT player while you are typing.
 	- muteKey: mute the player
 	- volUpKey: increase volume by 10/100
 	- volDownKey: decrease volume by 10/100
-- **Demo**
-
-	- [![timestamp](https://img.youtube.com/vi/ADJvhW31xj4/0.jpg)](https://www.youtube.com/watch?v=ADJvhW31xj4&ab_channel=ConnectedCognitionCrumbs)
-
+- **YouTube Demo**
+- [![timestamp](https://img.youtube.com/vi/ADJvhW31xj4/0.jpg)](https://www.youtube.com/watch?v=ADJvhW31xj4&ab_channel=ConnectedCognitionCrumbs)
+	
 - **Known Issues with Shortcuts:**
 	- **Common installation problem:** You need to have the code block as the child of {{[[roam/js]]}} so you need a tab befor the code block.	
 	- **Shortcuts in mac:** I'm not a mac user, I've compiled this list based on feedback I received, this is why the language is uncertain; I have not tested them myself. Special thanks to [Abhay Prasanna](https://twitter.com/AbhayPrasanna) and [Jerome Wong](https://github.com/DarkArcZ).
