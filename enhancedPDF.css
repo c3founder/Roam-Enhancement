@@ -4,6 +4,7 @@
   --col3: rgba(155, 253, 130, .8);
   --col4: rgba(130, 169, 255, .8);
   --col5: rgba(220, 131, 255, .7);
+  --col6: rgba(172,172,172, .7);
 }
 
 [data-tag^="h:"] {
@@ -12,11 +13,11 @@
 
 [data-tag^="h:"] + .rm-highlight, 
 [data-tag^="h:"] + span > .rm-page-ref--link {
-color: rgb(0,0,0) !important;
-//border-radius: 5px;
-//padding-left: 5px;
-//padding-right: 5px;
-//font-weight: bold;
+  color: rgb(0,0,0) !important;
+  /*border-radius: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  font-weight: bold;*/
 }
 
 [data-tag^="h:yellow"] + .rm-highlight,
@@ -60,6 +61,14 @@ color: rgb(0,0,0) !important;
 [data-tag^="h:purple"] + .rm-bold 
 {color: var(--col5); }
 
+[data-tag^="h:grey"] + .rm-highlight,
+[data-tag^="h:grey"] + span > .rm-page-ref--link {
+	background-color: var(--col6) !important;
+}
+[data-tag^="h:grey"] + .rm-italics, 
+[data-tag^="h:grey"] + .rm-bold 
+{color: var(--col6); }
+
 /*All btns*/
 .btn{padding: 0px !important;  border: 3px !important;}
 
@@ -89,3 +98,7 @@ color: rgb(0,0,0) !important;
   color: rgb(6,6,6);
 }
 
+/* Hide PDF Breadcrumb */
+.parent-path-wrapper > div > span > div > div {
+  display: none;
+}

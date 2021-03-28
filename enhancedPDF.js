@@ -66,7 +66,8 @@ function adjustPdfIframe(iframe, sideBarOpen) {
     hoverParent.style.width = '100%';
     hoverParent.style.height = '100%';
   } else {
-    hoverParent.style.width = `${pdfParams.pdfStaticWidth}px`
+    const page = document.querySelector('.roam-log-page')
+    hoverParent.style.width = window.getComputedStyle(page).getPropertyValue('width'); 
     hoverParent.style.height = `${pdfParams.pdfStaticHeight}px`
   }
 }

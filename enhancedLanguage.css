@@ -1,0 +1,186 @@
+.rm-block-separator {
+	min-width: var(--rm-block-sep-min-width);
+}
+/*****RTL*****/
+/**Direction**/
+.main-rtl:not(.katex):not(.katex span){
+  direction: rtl;
+}
+
+.multibar-rtl{
+    left:unset;
+    right:-10px;
+    border-right:unset;
+    border-left:1px solid #BFCCD6
+}
+
+.multibar-rtl:hover{
+     border-right:unset;
+     border-left:3px solid #5C7080
+}
+
+.main-rtl .rm-caret.rm-caret-closed {
+  transform: rotate(90deg) !important;
+}
+
+.roam-block-container[data-direction*='rtl']  
+ .rm-emoji-block-view {
+   margin-left: 0px;
+  margin-right: 40px;
+  direction: rtl;
+}
+.roam-block-container[data-direction*='rtl']  
+.rm-emoji-block-view .rm-emoji-button .rm-emoji-number {
+  height: 100%;
+  font-size: 10px;
+  margin-left: 6px;
+  margin-right: 0px;
+  font-weight: 500;
+}
+
+.roam-block-container[data-direction*='rtl']> .rm-block-children {
+    margin-right: var(--rtl-margin-right) !important;
+  	margin-left: var(--rtl-margin-left) !important;
+}
+
+.main-rtl > .controls > .rm-bullet {
+  margin-top: var(--rtl-bullet-margin-top);
+}
+
+.main-rtl > .controls > .block-expand > .rm-caret{
+  margin-top: var(--rtl-control-margin-top);
+}
+
+/***************/
+/*****Fonts*****/
+.main-rtl span:not(.bp3-icon-standard):not(.katex):not(.katex span){
+  font-family: var(--rtl-font), var(--rtl-generic-font);
+  font-size: var(--rtl-font-size);
+}
+
+.main-rtl textarea{
+  font-family: var(--rtl-font), var(--rtl-generic-font);
+  background-color: var(--rtl-textarea-background-color);
+  font-size: var(--rtl-textarea-font-size);
+}
+
+a[data-direction*='rtl'] > div{
+  direction: rtl;
+  font-family: var(--rtl-font), var(--rtl-generic-font);
+}
+
+h1.rm-title-display[data-direction*='rtl']{
+  direction: rtl;
+}
+
+h1.rm-title-display[data-direction*='rtl']  span{
+  font-family:var(--rtl-font), var(--rtl-generic-font);
+  direction: rtl;
+}
+
+h1.rm-title-editing-display[data-direction*='rtl'] textarea{
+  font-family:var(--rtl-font), var(--rtl-generic-font);
+  direction: rtl;
+}
+ 
+/******************************************************/
+.CodeMirror-line span{
+    font-family:monospace !important;
+    font-size: 1em;
+}
+.roam-block-container[data-direction*='rtl'] .rm-block-children
+.rm-bullet--numbered-double-digit {
+  margin-left: 10px;
+  margin-right: unset;
+}
+.roam-block-container[data-direction*='rtl'] .rm-block-children
+.rm-bullet--numbered-single-digit {
+  margin-left: -4px;
+  margin-right: unset;
+}
+/******************************************************/
+/*****LTR*****/
+/**Direction**/
+.main-ltr:not(.katex):not(.katex span){
+  direction: ltr;
+}
+
+.multibar-ltr{
+    right:unset;
+    left:-10px;
+    border-left:unset;
+    border-right:1px solid #BFCCD6
+}
+
+.multibar-rtl:hover{
+     border-left:unset;
+	 border-right:3px solid #5C7080
+}
+
+.main-ltr .rm-caret.rm-caret-closed {
+  transform: rotate(-90deg) !important;
+}
+
+.roam-block-container[data-direction*='ltr']  
+ .rm-emoji-block-view {
+   margin-left: 40px;
+  margin-right: 0px;
+  direction: ltr;
+}
+.roam-block-container[data-direction*='ltr']  
+.rm-emoji-block-view .rm-emoji-button .rm-emoji-number {
+   height: 100%;
+  font-size: 10px;
+  margin-left: 0px;
+  margin-right: 6px;
+  font-weight: 500;
+}
+
+.roam-block-container[data-direction*='ltr']> .rm-block-children {
+    margin-left: var(--ltr-margin-left) !important;
+  	margin-right: var(--ltr-margin-right) !important;
+}
+
+.main-ltr > .controls > .rm-bullet {
+  margin-top: var(--ltr-bullet-margin-top);
+}
+
+.main-ltr > .controls > .block-expand > .rm-caret{
+  margin-top: var(--ltr-control-margin-top);
+}
+
+/***************/
+/*****Fonts*****/
+.main-ltr span:not(.bp3-icon-standard):not(.katex):not(.katex span){
+  font-family: var(--ltr-font), var(--ltr-generic-font);
+  font-size: var(--ltr-font-size);
+}
+
+.main-ltr textarea{
+  font-family: var(--ltr-font), var(--ltr-generic-font);
+  background-color: var(--ltr-textarea-background-color) !important;
+  font-size: var(--ltr-textarea-font-size);
+}
+
+a[data-direction*='ltr'] > div{
+  direction: ltr;  
+  font-family: var(--ltr-font), var(--ltr-generic-font);
+}
+
+
+
+h1.rm-title-display[data-direction*='ltr']{
+  direction: ltr;
+}
+
+h1.rm-title-display[data-direction*='ltr']  span{
+  font-family: var(--ltr-font), var(--ltr-generic-font);
+  direction: ltr;
+}
+
+h1.rm-title-editing-display[data-direction*='ltr'] textarea{
+  font-family: var(--ltr-font), var(--ltr-generic-font);
+  direction: ltr;
+} 
+
+/******************************************************/
