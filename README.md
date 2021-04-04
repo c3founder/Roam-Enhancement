@@ -10,15 +10,15 @@ To install, do the same thing you do for any roam/js script.
 
 1. Create page in Roam (if not already present) called [[roam/js]]
 
-1. If you previously installed this script by copying from a GitHub Gist, remove it from [[roam/js]] now.
+1. Create a block in the [[roam/js]] page and enter {{[[roam/js]]}}
 
-1. Create a new block on this page and enter: ```
+1. Create a new block under the {{[[roam/js]]}} block and enter: ```
 
-1. Nest under that block a Code Block
+1. This ``` create a code block for which you can select a language. 
 
 1. Make sure the code language is set as **JavaScript**
 
-1. Paste the JavaScript code into the new Code Block. Usually it looks something like this:
+1. Paste the JavaScript code into the code block. Usually it looks something like this:
 
    ``` javascript
    window.parameters = {
@@ -30,7 +30,7 @@ To install, do the same thing you do for any roam/js script.
    document.getElementsByTagName("head")[0].appendChild(s);
    ```
 
-1. A warning box shows up asking you to review the risks of using roam/js.
+1. A red warning box shows up asking you to review the risks of using roam/js.
 
 1. Once you have reviewed the warning and understand/accept the risk, click Yes.
 
@@ -38,7 +38,7 @@ To install, do the same thing you do for any roam/js script.
 
 ### CSS 
 
-To install the CSS put this line in a CSS code block on you [[roam/css]] page. Make sure the code language is set as **CSS**
+To install the CSS put this line in a CSS code block on you [[roam/css]] page. Make sure the code language is set to **CSS**
 
 ```css
 @import url('https://c3founder.github.io/Roam-Enhancement/enhancedX.css');
