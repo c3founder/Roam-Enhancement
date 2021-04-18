@@ -194,9 +194,6 @@ window.ytParams = {
   border : '0px',
   borderStyle : 'inset',
   borderRadius : '25px',
-  ////Player Size
-  vidHeight : 480,
-  vidWidth : 720,
   //Shortcuts
   grabTitleKey : 'alt+a t',
   grabTimeKey : 'alt+a n',  

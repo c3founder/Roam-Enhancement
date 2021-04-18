@@ -3,7 +3,7 @@
 // @name         Responsive YouTube Player & Timestamp Control & Player Controller for Roamresearch
 // @author       Connected Cognition Crumbs <c3founder@gmail.com>
 // @require 	   -
-// @version      0.4
+// @version      0.5
 // @description  Add timestamp controls to YouTube videos embedded in Roam and makes the player responsive. 
 //               Parameters:
 //               Shortcuts: 
@@ -71,24 +71,21 @@ const activateYtVideos = () => {
         return; //ignore breadcrumbs and page log            
       }
       const block = ytEl.closest('.roam-block-container');
-      if (ytEl.src.indexOf("enablejsapi") === -1) {
+      let frameId;
+      if (!ytEl.classList.contains('yt-activated')) {
         var ytId = extractVideoID(ytEl.src);
-        var frameId = "yt-" + ytEl.closest('.roam-block').id;
-        ytEl.parentElement.id = frameId;
-        ytEl.remove();
-        players.set(frameId, new window.YT.Player(frameId, {
-          height: ytParams.vidHeight,
-          width: ytParams.vidWidth,
-          videoId: ytId
-        }));
-        wrapIframe(frameId);
+        frameId = "yt-" + ytEl.closest('.roam-block').id;
+        var ytWrapper = document.createElement('div');
+        ytWrapper.id = frameId;
+        ytEl.parentNode.insertBefore(ytWrapper, ytEl);     
+        ytEl.remove()           
+        let newYTEl = new window.YT.Player(frameId, {videoId: ytId})
+        document.getElementById(frameId).classList.add('rm-iframe', 'rm-video-player', 'yt-activated')        
+        players.set(frameId, newYTEl);
       } else {
-        var frameId = ytEl.id
+        frameId = ytEl.id
       }
       addTimestampControls(block, players.get(frameId));
-      var sideBarOpen = document.getElementById("right-sidebar").childElementCount - 1;
-      //Make iframes flexible
-      adjustIframe(frameId, sideBarOpen);
     });
 };
 
@@ -142,53 +139,6 @@ const extractVideoID = (url) => {
   }
 };
 
-const adjustIframe = (frameId, sideBarOpen) => {
-  var child = document.getElementById(frameId); //Iframe
-  var par = child.parentElement;
-  if (sideBarOpen) {
-    child.style.position = 'absolute';
-    child.style.margin = '0px';
-    child.style.border = ytParams.border; //'0px';
-    child.style.width = '100%';
-    child.style.height = '100%';
-    child.style.borderStyle = ytParams.borderStyle; //'inset';
-    child.style.borderRadius = ytParams.borderRadius; //'25px';
-    par.style.position = 'relative';
-    par.style.paddingBottom = '56.25%';
-    par.style.height = '0px';
-  } else {
-    child.style.position = null;
-    child.style.margin = '0px';
-    child.style.border = ytParams.border; //'0px';        
-    child.style.width = ytParams.vidWidth + 'px';
-    child.style.height = ytParams.vidHeight + 'px';
-    child.style.borderStyle = ytParams.borderStyle; //'inset';
-    child.style.borderRadius = ytParams.borderRadius; //'25px';
-    par.style.position = null;
-    par.style.paddingBottom = '0px';
-    par.style.height = ytParams.vidHeight + 20 + 'px';
-  }
-}
-
-const wrapIframe = (frameId) => {
-  var child = document.getElementById(frameId); //Iframe
-  const videoWrapper = child.closest('.rm-iframe__spacing-wrapper');
-  if (videoWrapper) 
-    videoWrapper.replaceWith(...videoWrapper.childNodes);   
-  var par = document.createElement('div');
-  child.parentNode.insertBefore(par, child);
-  par.appendChild(child);
-  child.style.position = 'absolute';
-  child.style.margin = '0px';
-  child.style.border = '0px';
-  child.style.width = '100%';
-  child.style.height = '100%';
-  par.style.position = 'relative';
-  par.style.paddingBottom = '56.25%';
-  par.style.height = '0px';
-  child.classList.remove('rm-iframe__container', 'rm-video-player__container', 'hoverparent');
-};
-
 var ytReady = setInterval(() => {
   if (typeof (YT) == 'undefined' || typeof (YT.Player) == 'undefined') {
     const tag = document.createElement('script');
@@ -207,6 +157,7 @@ function fillTheBlock(givenTxt) {
   var e = new Event('input', { bubbles: true });
   newTextArea.dispatchEvent(e);
 }
+
 //Getting the playing player
 function whatIsPlaying() {
   for (let player of players.values()) {

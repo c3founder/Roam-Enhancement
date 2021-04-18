@@ -1,3 +1,9 @@
+.yt-activated{
+  border : 0px;
+  border-style : inset;
+  border-radius : 25px;
+}
+
 .timestamp-control{
   background-color: rgba(108,109,36,0.1); 
   color: rgb(251,106,13);
