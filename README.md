@@ -190,10 +190,6 @@ To install, do the same thing you do for any roam/js script.
 ```javascript
 window.ytParams = {
   //Player
-  ////Player Style
-  border : '0px',
-  borderStyle : 'inset',
-  borderRadius : '25px',
   //Shortcuts
   grabTitleKey : 'alt+a t',
   grabTimeKey : 'alt+a n',  

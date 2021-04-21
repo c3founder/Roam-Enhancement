@@ -80,7 +80,9 @@ const activateYtVideos = () => {
         ytEl.parentNode.insertBefore(ytWrapper, ytEl);     
         ytEl.remove()           
         let newYTEl = new window.YT.Player(frameId, {videoId: ytId})
-        document.getElementById(frameId).classList.add('rm-iframe', 'rm-video-player', 'yt-activated')        
+        let iframe = document.getElementById(frameId)
+        iframe.classList.add('rm-iframe', 'rm-video-player', 'yt-activated')      
+        iframe.closest('div').classList.add('rm-iframe__container', 'rm-video-player__container', 'hoverparent')
         players.set(frameId, newYTEl);
       } else {
         frameId = ytEl.id
