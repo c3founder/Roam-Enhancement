@@ -1,14 +1,27 @@
 # Table of Contents 
-[Introduction](#intro)  
+
+- [Introduction](#intro)  
+	- [Introduction](#intro)  
+	- [JavaScript Installation](#js)
+	- [CSS Installation](#css)
+	- [Demo Videos](#demo)
+	- [Reporting Issues and Feature Request](#bug)
+- [Enhancements](#enhance)
+	- [Mixed Text Direction](#dir)
+	- [PDF Highlighter](#pdf)
+	- [Enhanced YouTube Player ](#yt)
 
 <a name="intro"/>
+
 # Introduction 
 
 This repository contains a set of JavaScript plugin/extensions (and their related CSS) for Roam Research. I call them enhancements because they improve my daily interaction with Roam. I will gradually add more extensions that I develop for my needs here and update the old ones. 
 
 Here is the general installation guideline for all of the JavaScript and CSS codes. 
 
-### JavaScript
+<a name="js"/>
+
+### JavaScript Installation
 
 To install, do the same thing you do for any roam/js script.
 
@@ -40,7 +53,9 @@ To install, do the same thing you do for any roam/js script.
 
 1. Refresh Roam and the script should now be installed!
 
-### CSS 
+<a name="css"/>
+
+### CSS Installation
 
 To install the CSS put this line in a CSS code block on you [[roam/css]] page. Make sure the code language is set to **CSS**
 
@@ -48,9 +63,13 @@ To install the CSS put this line in a CSS code block on you [[roam/css]] page. M
 @import url('https://c3founder.github.io/Roam-Enhancement/enhancedX.css');
 ```
 
-### Demo
+<a name="demo"/>
+
+### Demo Videos
 
 I usually make YouTube demo video(s)  for each extension to explain functionalities and known issues. The main purpose of videos is to prevent confusion and ultimately reduce the number of questions I receive. So please watch them before sending in your questions!
+
+<a name="bug"/>
 
 ### Reporting Issues and Feature Request
 
@@ -62,7 +81,11 @@ Each extension has its own label that you can use when reporting issues.
 
 I'll post community wetted solutions to issues here over time. 
 
+<a name="enhance"/>
+
 # Enhancements
+
+<a name="dir"/>
 
 ## Mixed Text Direction
 
@@ -115,7 +138,7 @@ For example for 'Markazi Text', import the following: */
 
 ```
 
-
+<a name="pdf"/>
 
 ## PDF Highlighter 
 
@@ -184,6 +207,8 @@ document.getElementsByTagName("head")[0].appendChild(s);
 #### Functionalities
 Full tutorial here: 
 - [![pdfhighlighter](https://img.youtube.com/vi/-yVqQqUEHKI/0.jpg)](https://www.youtube.com/watch?v=-yVqQqUEHKI&ab_channel=CCC)
+
+<a name="yt"/>
 
 ## Enhanced YouTube Player 
 
