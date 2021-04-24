@@ -1,3 +1,7 @@
+# Table of Contents 
+[Introduction](#intro)  
+
+<a name="intro"/>
 # Introduction 
 
 This repository contains a set of JavaScript plugin/extensions (and their related CSS) for Roam Research. I call them enhancements because they improve my daily interaction with Roam. I will gradually add more extensions that I develop for my needs here and update the old ones. 

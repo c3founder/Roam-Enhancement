@@ -54,6 +54,22 @@ const activateAutoDir = () => {
     changeDir(document.querySelector('textarea'), true);
     //Fix txts in the title - textarea    
     changeDir(document.querySelector('h1.rm-title-editing-display > span'), true);
+    //Fix dropdown menu - page ref
+    // let dropDown = document.querySelector('div.main-rtl > div.rm-autocomplete__wrapper > div.bp3-elevation-3'); 
+    // if(dropDown){
+    //     if(!dropDown.classList.contains('direction-fixed')){
+    //       console.log("inner if")
+    //         dropDown.classList.add('direction-fixed')
+    //         let main = document.querySelector('textarea');
+    //         let fullWidth = window.getComputedStyle(main).getPropertyValue('width');
+    //         let left = window.getComputedStyle(dropDown).getPropertyValue('left');
+    //          console.log("fullWidth", fullWidth)
+    //         dropDown.style.left = parseInt(fullWidth, 10) - parseInt(left, 10) + "px"
+    //     }        
+    // }
 }
+
+
+
 
 setInterval(activateAutoDir, 1000);
