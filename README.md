@@ -7,6 +7,7 @@
 	- [Demo Videos](#demo)
 	- [Reporting Issues and Feature Request](#bug)
 - [Enhancements](#enhance)
+	- [Timer](#timer)
 	- [Mixed Text Direction](#dir)
 	- [PDF Highlighter](#pdf)
 	- [Enhanced YouTube Player ](#yt)
@@ -84,6 +85,41 @@ I'll post community wetted solutions to issues here over time.
 <a name="enhance"/>
 
 # Enhancements
+
+
+<a name="timer"/>
+
+## Time Tracking
+
+This is a stopwatch to track time spend on each block and its children. You can have multiple timers running but on each branch only one timer can be active. In other words, when you start a timer it will stop any other running timer on the same branch to prevent double counting. Below is the list of shortcuts:
+
+- Click: Start/Stop 
+- Shift Click: Open the timer's time entries in the right side bar
+- Control Click: On a running timer will delete the current time period
+
+You can manually edit the time and also put in duration. Here is the notation: 
+
+- start > end 
+- start + duration 
+- end - duration 
+
+An example for the duration format is: 12h 5m 3s. 
+
+#### JavaScript
+
+```javascript
+var s = document.createElement("script");
+s.type = "text/javascript";
+s.src = "https://c3founder.github.io/Roam-Enhancement/enhancedTimer.js";
+document.getElementsByTagName("head")[0].appendChild(s);
+```
+
+#### CSS 
+
+```css
+@import url('https://c3founder.github.io/Roam-Enhancement/enhancedTimer.css');
+```
+
 
 <a name="dir"/>
 
