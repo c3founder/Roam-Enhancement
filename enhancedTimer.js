@@ -155,7 +155,7 @@ function writeSegmentLog(timerBlockUid, startTime, endTime) {
     } else {
         segmentUid = match[1]
     }
-    createChildBlock(segmentUid, 0, new Date(startTime).toLocaleString() + ' > ' + new Date(endTime).toLocaleString(), createUid())
+    createChildBlock(segmentUid, 0, new Date(startTime).toString().slice(4, 24) + ' > ' + new Date(endTime).toString().slice(4, 24), createUid())
 }
 
 
