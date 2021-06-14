@@ -1,15 +1,22 @@
 .timer-activated{
-  padding: 0px 5px !important;
-  box-shadow: 2px 2px !important;
+  box-shadow: 1px 1px !important;
   border-radius: 25px 50px 50px 25px !important;
   color: rgb(41,44,54) !important;
-  font-weight: 600 !important;
-  height: 18px !important;
+  min-height: 16px!important;
+  height:18px!important;
+  margin-bottom: 3px!important;
+  padding-bottom: 1px!important;
+  font-weight: 800!important;
 }
-
 .timer-activated.running{
   /*background-color : rgb(6,226,6);*/
   background-image: linear-gradient(rgb(0,190,0), rgb(51,221,51), rgb(0,190,0));
+  color: white !important;
+}
+
+.timer-activated.running:hover{
+  /*background-color : rgb(6,226,6);*/
+  background-image: linear-gradient(rgb(51,221,51), rgb(0,190,0),rgb(51,221,51));
   color: white !important;
 }
 
@@ -19,6 +26,8 @@
   color: white !important;
 }
 
-.timer-zoomed{
-    display: none; 
+.timer-activated.paused:hover{
+  /*background-color : rgb(255,38,38);*/
+  background-image: linear-gradient(rgb(255,62,62), rgb(219,0,0), rgb(255,62,62));
+  color: white !important;
 }
