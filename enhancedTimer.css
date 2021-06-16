@@ -31,3 +31,7 @@
   background-image: linear-gradient(rgb(255,62,62), rgb(219,0,0), rgb(255,62,62));
   color: white !important;
 }
+
+.timer-zoomed{
+  display: none; 
+}
