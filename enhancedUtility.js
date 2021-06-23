@@ -11,7 +11,7 @@
     }
 
     ccc.util.getNthChildUid = (parentUid, order) => {
-        const allChildren = allChildrenInfo(parentUid)[0][0].children;
+        const allChildren = ccc.util.allChildrenInfo(parentUid)[0][0].children;
         const childrenOrder = allChildren.map(function (child) { return child.order; });
         const index = childrenOrder.findIndex(el => el === order);
         return index !== -1 ? allChildren[index].uid : null;
@@ -20,7 +20,7 @@
     ccc.util.sleep = m => new Promise(r => setTimeout(r, m))
 
     ccc.util.createPage = (pageTitle) => {
-        let pageUid = createUid()
+        let pageUid = ccc.util.createUid()
         const status = window.roamAlphaAPI.createPage(
             {
                 "page":
