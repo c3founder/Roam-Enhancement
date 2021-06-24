@@ -1,5 +1,6 @@
 (() => {
-    ccc.util = {};
+    var ccc = window.ccc = window.ccc || {};
+    ccc.util = {}; 
 
     ///////////////Front-End///////////////
     ccc.util.getUidOfContainingBlock = (el) => {
