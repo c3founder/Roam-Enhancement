@@ -68,6 +68,10 @@
         return res.length ? blockUid : null
     }
 
+    ccc.util.deleteBlock = (blockUid) => {
+        return window.roamAlphaAPI.deleteBlock({ "block": { "uid": blockUid } });
+    }
+
     ccc.util.parentBlockUid = (blockUid) => {
         const res = window.roamAlphaAPI.q(
             `[:find (pull ?parent [:block/uid])
