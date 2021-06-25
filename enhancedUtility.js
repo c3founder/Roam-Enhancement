@@ -1,8 +1,7 @@
 var ccc = ccc = ccc || {};
+ccc.util = {};
 
 (() => {
-    ccc.util = {};
-
     ///////////////Front-End///////////////
     ccc.util.getUidOfContainingBlock = (el) => {
         return el.closest('.rm-block__input').id.slice(-9)
