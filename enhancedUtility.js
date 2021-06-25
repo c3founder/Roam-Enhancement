@@ -1,6 +1,6 @@
 (() => {
     var ccc = window.ccc = window.ccc || {};
-    ccc.util = {}; 
+    ccc.util = {};
 
     ///////////////Front-End///////////////
     ccc.util.getUidOfContainingBlock = (el) => {
@@ -60,6 +60,10 @@
         return roamAlphaAPI.util.generateUID();
     }
 
+    ccc.util.openBlockInSidebar = (blockUid) => {
+        window.roamAlphaAPI.ui.rightSidebar.addWindow({ window: { type: "block", "block-uid": blockUid } })
+    }
+
     ///////////////Back-End///////////////
     ccc.util.existBlockUid = (blockUid) => {
         const res = window.roamAlphaAPI.q(
@@ -89,10 +93,13 @@
     }
 
     ccc.util.allChildrenInfo = (blockUid) => {
-        return window.roamAlphaAPI.q(
-            `[:find (pull ?parent [* {:block/children [:block/string :block/uid :block/order]}])
+        let results = window.roamAlphaAPI.q(
+            `[:find (pull ?parent 
+                [* {:block/children [:block/string :block/uid :block/order]}])
       :where
           [?parent :block/uid \"${blockUid}\"]]`)
+        return (results.length == 0) ? undefined : results
+
     }
 
     ccc.util.queryAllTxtInChildren = (blockUid) => {
@@ -112,6 +119,14 @@
         return res.length ? res[0][0].uid : null
     }
 
-
+    ccc.util.getOrCreatePageUid = (pageTitle, initString = null) => {
+        let pageUid = ccc.util.getPageUid(pageTitle)
+        if (!pageUid) {
+            pageUid = ccc.util.createPage(pageTitle);
+            if (initString)
+                ccc.util.createChildBlock(pageUid, 0, initString, ccc.util.createUid());
+        }
+        return pageUid;
+    }
 
 })();
