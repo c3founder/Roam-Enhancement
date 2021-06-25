@@ -1,5 +1,6 @@
+var ccc = ccc = ccc || {};
+
 (() => {
-    var ccc = window.ccc = window.ccc || {};
     ccc.util = {};
 
     ///////////////Front-End///////////////
