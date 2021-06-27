@@ -7,12 +7,14 @@
 	- [Demo Videos](#demo)
 	- [Reporting Issues and Feature Request](#bug)
 - [Enhancements](#enhance)
-	- [Timer](#timer)
+	- [Math and Multi Language OCR](#ocr)
+	- [Timer and Counter](#timer)
 	- [Mixed Text Direction](#dir)
 	- [PDF Highlighter](#pdf)
 	- [Enhanced YouTube Player ](#yt)
 
 <a name="intro"/>
+
 
 # Introduction 
 
@@ -86,24 +88,54 @@ I'll post community wetted solutions to issues here over time.
 
 # Enhancements
 
+<a name="ocr"/>
+
+## Math and Multi Language OCR
+
+This extension OCRs images that you have in roam. It supports up to two languages plus math and handwritten text. Images do not need to be uploaded into your roam graph (i.e., no CORS issue). It works on extracted area highlights of the [PDF Highlighter](#pdf).
+
+#### JavaScript
+
+```javascript
+window.ocrParams = {
+    lang1: "eng", //Shift + Click
+    lang2: "ara", //Alt + Click
+    //Mathpix parameters
+    appId: "YOUR_APP_ID",
+    appKey: "YOUR_APP_KEY",    
+    //Cleanup Shortcut
+    cleanKey: 'alt+a c',
+	//Edit options
+    saveRef2Img: false
+};
+
+var s = document.createElement("script");
+s.type = "text/javascript";
+s.src = "https://c3founder.github.io/Roam-Enhancement/enhancedOCR.js";
+document.getElementsByTagName("head")[0].appendChild(s);
+```
+
+#### Functionalities
+- **Parameters** 
+	The extracted text will be the child block of the image. If you are only interested in the extracted text and not the original image, you can "cleanup" by pressing the `cleanKey` shortcut: It will replace the image block with the extracted text and remove the text block. If you want to save a reference to the original image (just in case, as an alias) you can set `saveRef2Img: true`.
+	
+- **Mathpix Support**
+	You need to set up a mathpix account and get an app id and key. Read more about mathpix great service [here](https://mathpix.com/#features). And find their API [here](https://docs.mathpix.com/#introduction).
+
+- **YouTube Demos**
+	- New tutorial: 
+	[![ocrwithcors](https://img.youtube.com/vi/z3BoV-vkSRY/0.jpg)]()
+
+	- Older tutorial:
+	[![ocrgist](https://img.youtube.com/vi/BSVxxDsZVNQ/0.jpg)](https://youtu.be/BSVxxDsZVNQ)
+
+
+
 
 <a name="timer"/>
 
-## Time Tracking
-
-This is a stopwatch to track time spend on each block and its children. You can have multiple timers running but on each branch only one timer can be active. In other words, when you start a timer it will stop any other running timer on the same branch to prevent double counting. Below is the list of shortcuts:
-
-- Click: Start/Stop 
-- Shift Click: Open the timer's time entries in the right side bar
-- Control Click: On a running timer will delete the current time period
-
-You can manually edit the time and also put in duration. Here is the notation: 
-
-- start > end 
-- start + duration 
-- end - duration 
-
-An example for the duration format is: 12h 5m 3s. 
+## Time and Habit Tracking
+This is an ongoing effort to build a time+habit+goal tracker in roam. Timer and counter are done, stay tuned for statistics and habit tracker.  
 
 #### JavaScript
 
@@ -119,7 +151,28 @@ document.getElementsByTagName("head")[0].appendChild(s);
 ```css
 @import url('https://c3founder.github.io/Roam-Enhancement/enhancedTimer.css');
 ```
+#### Functionalities
 
+##### Timer 
+{{[[c3-timer]]}} makes a stopwatch to track time spend on each block and its children. You can have multiple timers running but on each branch only one timer can be active. In other words, when you start a timer it will stop any other running timer on the same branch to prevent double counting. 
+
+- **Shortcuts** 
+	- Click: Start/Stop 
+	- Shift Click: Open the timer's time entries in the right side bar
+	- Control Click: On a running timer will delete the current time period
+
+- **Time Entry Format** You can manually edit the time and also put in duration. Here is the notation: 
+	- start > end 
+	- start + duration 
+	- end - duration 
+	An example for the duration format is: 12h 5m 3s. 
+
+- **YouTube Demo**
+	- Timer set up tutorial: 
+	[![timersetup](https://img.youtube.com/vi/GR_eZDEE7jo/0.jpg)](https://youtu.be/GR_eZDEE7jo)
+
+##### Counter
+{{[[c3-counter]]}} makes is a counter that goes up/down by click/shift-click. You can also manually enter the count as {{[[c3-counter]]:count}}.
 
 <a name="dir"/>
 
@@ -173,6 +226,14 @@ For example for 'Markazi Text', import the following: */
 }
 
 ```
+
+#### Functionalities
+New tutorial: 
+- [![mixedrtl](https://img.youtube.com/vi/z3BoV-vkSRY/0.jpg)](https://www.youtube.com/watch?v=z3BoV-vkSRY)
+
+Older tutorial:
+- [![rtl](https://img.youtube.com/vi/fp6akQlmyEw/0.jpg)](https://www.youtube.com/watch?v=fp6akQlmyEw)
+
 
 <a name="pdf"/>
 
