@@ -32,6 +32,18 @@
   color: white !important;
 }
 
-.timer-zoomed{
+.timer-zoomed, .counter-zoomed{
   display: none; 
+}
+
+.counter-activated{
+  box-shadow: 1px 1px !important;
+  border-radius: 25px 50px 50px 25px !important;
+  min-height: 16px!important;
+  height:18px!important;
+  margin-bottom: 3px!important;
+  padding-bottom: 1px!important;
+  font-weight: 800!important;
+  background-image: linear-gradient(rgb(0, 125, 209), rgb(51, 167, 221), rgb(0, 125, 209)) !important;
+  color: white !important;
 }

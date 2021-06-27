@@ -1,4 +1,4 @@
-var ccc = ccc || {};
+var ccc = window.ccc || {};
 ccc.util = ((c3u) => {
     ///////////////Front-End///////////////
     c3u.getUidOfContainingBlock = (el) => {
@@ -52,13 +52,20 @@ ccc.util = ((c3u) => {
             })
     }
 
+    c3u.openBlockInSidebar = (windowType, blockUid) => {
+        return window.roamAlphaAPI.ui.rightSidebar.addWindow({ window: { type: windowType, 'block-uid': blockUid } })
+    }
+
+    c3u.deletePage = (pageUid) => {
+        return window.roamAlphaAPI.deletePage({ page: { uid: pageUid } });
+    }
+
+
     c3u.createUid = () => {
         return roamAlphaAPI.util.generateUID();
     }
 
-    c3u.openBlockInSidebar = (blockUid) => {
-        window.roamAlphaAPI.ui.rightSidebar.addWindow({ window: { type: "block", "block-uid": blockUid } })
-    }
+
 
     ///////////////Back-End///////////////
     c3u.existBlockUid = (blockUid) => {
@@ -140,7 +147,7 @@ ccc.util = ((c3u) => {
         if (node.uid) descendantUids.push(node.uid)
         if (node.children)
             node.children.forEach(child => c3u.getUidFromNestedNodes(child, descendantUids))
-    }    
+    }
 
     return c3u;
 })(ccc.util || {});
