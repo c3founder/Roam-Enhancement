@@ -1,14 +1,14 @@
 /* Begin Importing Utility Functions */
-if (typeof ccc.util === 'undefined') {
+if (typeof ccc !== 'undefined' && typeof ccc.util !== 'undefined') {
+    //Somebody has already loaded the utility
+    startC3OcrExtension()
+} else {
     let s = document.createElement("script");
     s.type = "text/javascript";
     s.src = "https://c3founder.github.io/Roam-Enhancement/enhancedUtility.js"
     s.id = 'c3util'
-    s.onload = () => { startC3TimerExtension(); startC3CounterExtension(); }
+    s.onload = () => { startC3OcrExtension() }
     document.getElementsByTagName('head')[0].appendChild(s);
-} else {
-    startC3TimerExtension()
-    startC3CounterExtension()
 }
 /* End Importing Utility Functions */
 
