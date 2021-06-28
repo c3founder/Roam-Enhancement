@@ -12,6 +12,7 @@ if (!document.getElementById("Mousetrap")) {
     s.type = "text/javascript";
     s.src = "https://unpkg.com/mousetrap@1.6.5/mousetrap.js";
     s.id = "Mousetrap"
+    s.onload = () => { bindShortkeys() }
     document.getElementsByTagName("head")[0].appendChild(s);
 }
 /* End Importing Other Packages */
@@ -19,13 +20,14 @@ if (!document.getElementById("Mousetrap")) {
 /* Begin Importing Utility Functions */
 if (typeof ccc !== 'undefined' && typeof ccc.util !== 'undefined') {
     //Somebody has already loaded the utility
-    startC3OcrExtension()
+    startC3OcrExtension();
 } else {
     let s = document.createElement("script");
     s.type = "text/javascript";
     s.src = "https://c3founder.github.io/Roam-Enhancement/enhancedUtility.js"
-    s.id = 'c3util'
+    s.id = 'c3util4ocr'
     s.onload = () => { startC3OcrExtension() }
+    try { document.getElementById('c3util').remove() } catch (e) { };
     document.getElementsByTagName('head')[0].appendChild(s);
 }
 /* End Importing Utility Functions */
@@ -136,18 +138,19 @@ function startC3OcrExtension() {
 
     observerImg = new MutationObserver(scanForNewImages);
     observerImg.observe(document, { childList: true, subtree: true })
+}
 
-    let mouseTrapReady = setInterval(() => {
-        if (Mousetrap === undefined) return;
-        Mousetrap.bind(ocrParams.cleanKey, async function (e) {
-            const activeTxt = document.querySelector('textarea.rm-block-input');
-            let recognizedTxt = activeTxt.value;
-            const blockUid = c3u.getUidOfContainingBlock(activeTxt);
-            const parentUid = c3u.parentBlockUid(blockUid);
-            c3u.deleteBlock(blockUid);
-            c3u.updateblockString(parentUid, recognizedTxt);
-            return false;
-        });
-        clearInterval(mouseTrapReady);
-    }, 1000);
+function bindShortkeys() {
+    Mousetrap.prototype.stopCallback = function () { return false }
+
+    Mousetrap.bind(ocrParams.cleanKey, async function (e) {
+        e.preventDefault();
+        const activeTxt = document.querySelector('textarea.rm-block-input');
+        let recognizedTxt = activeTxt.value;
+        const blockUid = window.ccc.util.getUidOfContainingBlock(activeTxt);
+        const parentUid = window.ccc.util.parentBlockUid(blockUid);
+        window.ccc.util.deleteBlock(blockUid);
+        window.ccc.util.updateBlockString(parentUid, recognizedTxt);
+        return false;
+    }, 'keydown');
 }

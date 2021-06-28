@@ -1,16 +1,19 @@
 /* Begin Importing Utility Functions */
 if (typeof ccc !== 'undefined' && typeof ccc.util !== 'undefined') {
     //Somebody has already loaded the utility
-    startC3OcrExtension()
-} else {
+    startC3TimerExtension(); startC3CounterExtension();
+} else {    
     let s = document.createElement("script");
     s.type = "text/javascript";
     s.src = "https://c3founder.github.io/Roam-Enhancement/enhancedUtility.js"
-    s.id = 'c3util'
-    s.onload = () => { startC3OcrExtension() }
+    s.id = 'c3util4timer'
+    s.onload = () => { startC3TimerExtension(); startC3CounterExtension(); }
+    //try { document.getElementById('c3util').remove() } catch(e){};
     document.getElementsByTagName('head')[0].appendChild(s);
 }
 /* End Importing Utility Functions */
+
+
 
 function startC3CounterExtension() {
     var ccc = window.ccc || {};
