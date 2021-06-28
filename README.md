@@ -124,7 +124,7 @@ document.getElementsByTagName("head")[0].appendChild(s);
 
 - **YouTube Demos**
 	- New tutorial: 
-	[![ocrwithcors](https://img.youtube.com/vi/z3BoV-vkSRY/0.jpg)]()
+	[![ocrwithcors](https://img.youtube.com/vi/N8DOqIZQFLU/0.jpg)](https://www.youtube.com/watch?v=N8DOqIZQFLU)
 
 	- Older tutorial:
 	[![ocrgist](https://img.youtube.com/vi/BSVxxDsZVNQ/0.jpg)](https://youtu.be/BSVxxDsZVNQ)
