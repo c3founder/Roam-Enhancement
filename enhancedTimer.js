@@ -202,7 +202,7 @@ function startC3TimerExtension() {
         const match = c3u.blockString(timerBlockUid)
             .match(/.*{{\[\[c3-timer\]\]:\s*\(\((.........)\)\)}}.*/);
         if (!match) return; //timer is not started. 
-        c3u.openBlockInSidebar(match[1]);
+        c3u.openBlockInSidebar("block", match[1]);
     }
 
     function pauseAllTimerElements(timerBlockUid) {
