@@ -249,7 +249,7 @@ function startC3TimerExtension() {
             segmentUid = c3u.createUid();
             const today = new Date();
             c3u.createChildBlock(
-                c3u.getPageUid(segmentLogPage + '/' + today.getFullYear() + '/' + today.getMonth(), 'Log of Stopped Timers'),
+                c3u.getOrCreatePageUid(segmentLogPage + '/' + today.getFullYear() + '/' + today.getMonth(), 'Log of Stopped Timers'),
                 1, timerBlockUid, segmentUid)
             const replacement = c3u.blockString(timerBlockUid).replace(']}}', ']:((' + segmentUid + '))}}');
             c3u.updateBlockString(timerBlockUid, replacement)
