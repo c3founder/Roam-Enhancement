@@ -1,7 +1,6 @@
 # Table of Contents 
 
 - [Introduction](#intro)  
-	- [Introduction](#intro)  
 	- [JavaScript Installation](#js)
 	- [CSS Installation](#css)
 	- [Demo Videos](#demo)
@@ -24,7 +23,7 @@ Here is the general installation guideline for all of the JavaScript and CSS cod
 
 <a name="js"/>
 
-### JavaScript Installation
+## JavaScript Installation
 
 To install, do the same thing you do for any roam/js script.
 
@@ -58,7 +57,7 @@ To install, do the same thing you do for any roam/js script.
 
 <a name="css"/>
 
-### CSS Installation
+## CSS Installation
 
 To install the CSS put this line in a CSS code block on you [[roam/css]] page. Make sure the code language is set to **CSS**
 
@@ -68,13 +67,13 @@ To install the CSS put this line in a CSS code block on you [[roam/css]] page. M
 
 <a name="demo"/>
 
-### Demo Videos
+## Demo Videos
 
 I usually make YouTube demo video(s)  for each extension to explain functionalities and known issues. The main purpose of videos is to prevent confusion and ultimately reduce the number of questions I receive. So please watch them before sending in your questions!
 
 <a name="bug"/>
 
-### Reporting Issues and Feature Request
+## Reporting Issues and Feature Request
 
 You can report bugs and suggest new features through GitHub:
 
@@ -255,39 +254,36 @@ Thanks to the following roamcult members who supported the development of this e
 
 ``` javascript
 window.pdfParams = {
-	//Highlight 
-	///Placement
-	outputHighlighAt: 'cousin', //cousin, child
-	highlightHeading: '**Highlights**', //for cousin mode only 
-	appendHighlight: true, //append: true, prepend: false
-	///Rest of Highlight Options
-	breadCrumbAttribute: 'Title', //Title, Author, Citekey, etc. 
-	addColoredHighlight: true,//bring the color of highlights into your graph
-	//Rerference to Highlight 
-	///Block References Related
-	copyBlockRef: true,//false: copy captured text
-	sortBtnText: 'sort them all!',//{ { sort them all! } } btn will sort highlight refs.
-	///Block Reference Buttons  
-	aliasChar: '✳', //use '' to disable
-	textChar: 'T', //use '' to disable	
-	//PDF Viewer
-	pdfStaticHeight: 900,
-	pdfStaticWidth: 1200,
-	pdfMinWidth: 450,
-	pdfMinHeight: 900,
-	//Citation 
-	///Format   
-	////use Citekey and page in any formating string 
-	////page can be offset by `Page Offset` attribute. 
-	////common usecase: 
-	/////Zotero imports with 'roam page title' = @Citekey and Citekey attribute
-	////examples:
-	/////"[${Citekey}]([[@${Citekey}]])" 
-	/////"[(${Citekey}, ${page})]([[@${Citekey}]])" 
-	/////use '' to disable  
-	citationFormat: '',
-	///BlockQuote 
-	blockQPerfix: ''//use '' to disable. Alternatives are: > or [[>]].
+  //Highlight 
+  ///Placement
+  outputHighlighAt: 'cousin', //cousin, child
+  highlightHeading: '**Highlights**', //for cousin mode only 
+  appendHighlight: true, //append: true, prepend: false
+  ///Rest of Highlight Options
+  breadCrumbAttribute: 'Title', //Title, Author, Citekey, etc. 
+  addColoredHighlight: true,//bring the color of highlights into your graph
+  //Rerference to Highlight 
+  ///Block References Related
+  copyBlockRef: true,//false: copy captured text
+  sortBtnText: 'sort them all!',//{{sort them all!}} button will sorted highlight references.
+  ///Block Reference Buttons  
+  aliasChar: '✳', //use '' to disable
+  textChar: 'T', //use '' to disable	
+  //PDF Viewer
+  pdfMinHeight: 900,
+  //Citation 
+  ///Format   
+  ////use Citekey and page in any formating string 
+  ////page can be offset by `Page Offset` attribute. 
+  ////common usecase: 
+  /////Zotero imports with 'roam page title' = @Citekey and Citekey attribute
+  ////examples:
+  /////"[${Citekey}]([[@${Citekey}]])" 
+  /////"[(${Citekey}, ${page})]([[@${Citekey}]])" 
+  /////use '' to disable  
+  citationFormat: '',
+  ///BlockQuote 
+  blockQPerfix: ''//use '' to disable. Alternatives are: > or [[>]].
 };
 var s = document.createElement("script");
 s.type = "text/javascript";
