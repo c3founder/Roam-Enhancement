@@ -48,8 +48,8 @@ function startC3PdfExtension() {
   /*******************************************************/
   /**********************Main BEGIN***********************/
 
-  const serverPerfix = 'http://localhost:3000/?url=';
-  //const serverPerfix = 'https://roampdf.web.app/?url=';
+  // const serverPerfix = 'http://localhost:3000/?url=';
+  const serverPerfix = 'https://roampdf.web.app/?url=';
   const pdfChar = ' ';
 
 
