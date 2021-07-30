@@ -345,7 +345,7 @@ function startC3PdfExtension() {
       const wrapperSpan = btn.closest('.bp3-popover-wrapper')
       const closestSpan = btn.closest('span')
       closestSpan.classList.add('displacedBtns')
-      closestSpan.parentElement.closest('span').querySelector('.rm-block__ref-count-footnote').closest('.bp3-popover-wrapper').remove();
+      closestSpan.parentElement.closest('span').querySelector('.rm-block__ref-count-footnote')?.closest('.bp3-popover-wrapper').remove();
       c3u.insertAfter(closestSpan, wrapperSpan)
       //Fix footnote btn if exists
       const footnote = wrapperSpan.closest('span').querySelector('.rm-block__ref-count-footnote')
