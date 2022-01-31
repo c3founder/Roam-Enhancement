@@ -190,7 +190,7 @@ function startC3PdfExtension() {
         const sortBtnBlockUid = c3u.getUidOfContainingBlock(btn);
         btn.classList.add('btn-sort-highlight', 'btn-pdf-activated');
         const pdfUid = c3u.parentBlockUid(sortBtnBlockUid)
-        const match = c3u.blockString(pdfUid).match(/\{{pdf:\s(.*)}}/);
+        const match = c3u.blockString(pdfUid).match(/\{{\[?\[?pdf\]?\]?:\s(.*)}}/);
         if (match[1]) {
           const pdfUrl = match[1];
           let highlights = getAllHighlights(pdfUrl, pdfUid)
@@ -248,7 +248,7 @@ function startC3PdfExtension() {
     let match = c3u.blockString(hlBlockUid).match(/\[..?]\(\(\((.........)\)\)\)/);
     if (!match[1]) return null;
     const pdfUid = match[1];
-    match = c3u.blockString(pdfUid).match(/\{{pdf:\s(.*)}}/);
+    match = c3u.blockString(pdfUid).match(/\{{\[?\[?pdf\]?\]?:\s(.*)}}/);
     if (!match[1]) return null;
     const pdfUrl = match[1];
     return { url: pdfUrl, uid: pdfUid };
