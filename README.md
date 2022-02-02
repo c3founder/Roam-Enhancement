@@ -205,7 +205,7 @@ For example for 'Markazi Text', import the following: */
   --rtl-margin-left: 31px; 
   --rtl-bullet-margin-top: 5px;
   --rtl-control-margin-top: 4px;
-  --rtl-generic-font: san-serif;
+  --rtl-generic-font: sans-serif;
   --rtl-font: 'Noto Naskh Arabic'; /*'Markazi Text'*/ /*Make sure you select the generic font first*/
   --rtl-font-size: 1em;
   --rtl-textarea-background-color: rgba(253,253,168,0.53);
