@@ -107,12 +107,11 @@ ccc.util = ((c3u) => {
 
     c3u.queryAllTxtInChildren = (blockUid) => {
         return window.roamAlphaAPI.q(`[
-      :find (pull ?block [
-          :block/string
-          :block/children
-          {:block/children ...}
-      ])
-      :where [?block :block/uid \"${blockUid}\"]]`)
+            :find (pull ?block [
+                :block/string
+                {:block/children ...}
+            ])
+            :where [?block :block/uid \"${blockUid}\"]]`)
     }
 
     c3u.getPageUid = (pageTitle) => {
