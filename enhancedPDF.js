@@ -687,8 +687,10 @@ function startC3PdfExtension() {
   let activePdfIframeId = null; //Last active pdf iframe.id
 
   window.addEventListener('blur', function () {
-    activePdfIframe = allPdfIframes.find(x => x === document.activeElement);
-    activePdfIframeId = activePdfIframe?.id;
+      setTimeout(function () {
+        activePdfIframe = allPdfIframes.find(x => x === document.activeElement);
+        activePdfIframeId = activePdfIframe?.id;
+      }, 500)
   });
 
   /////////////////////Show the PDF through the Server
